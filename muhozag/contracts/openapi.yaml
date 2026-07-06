@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Security Filter Check Contract
+  version: "1.0"
+  description: >
+    Any application's security filter that implements this single endpoint
+    can be tested by redteam-cli, and any filter can be swapped behind it
+    (regex-based, LLM-based, hybrid) without breaking callers.
+
+paths:
+  /v1/check-input:
+    post:
+      summary: Evaluate a piece of text for security concerns
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecurityCheckRequest'
+      responses:
+        '200':
+          description: Verdict produced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityCheckResponse'
+        '400':
+          description: Malformed request (e.g. missing text field)
+        '500':
+          description: Filter failed to produce a verdict
+
+  /health:
+    get:
+      summary: Liveness check
+      responses:
+        '200':
+          description: Service is up
+
+components:
+  schemas:
+    SecurityCheckRequest:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+        context:
+          type: string
+          nullable: true
+        max_length:
+          type: integer
+          default: 10000
+
+    SecurityCheckResponse:
+      type: object
+      required: [verdict, confidence, reasoning, latency_ms]
+      properties:
+        verdict:
+          type: string
+          enum: [allow, block, review]
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        reasoning:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+        latency_ms:
+          type: integer
