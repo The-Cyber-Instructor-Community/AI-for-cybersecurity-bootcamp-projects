@@ -1,0 +1,96 @@
+/* ScanHistory — sidebar list of past scans */
+
+.scan-history {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.scan-history.empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.scan-history h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.scan-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.scan-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-size: 0.82rem;
+}
+
+.scan-item:hover {
+  background: var(--hover);
+}
+
+.scan-item.active {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+}
+
+/* Failed/running/pending scans are not clickable */
+.scan-item.non-selectable {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.scan-item.non-selectable:hover {
+  background: transparent;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.scan-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.scan-domain {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scan-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.scan-params {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: "SF Mono", "Fira Code", monospace;
+  white-space: nowrap;
+}

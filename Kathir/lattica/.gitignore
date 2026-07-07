@@ -1,0 +1,25 @@
+ # Python (backend)                                                                                                                                                                                                                          
+  __pycache__/                                                                                                                                                                                                                                
+  *.pyc                                                                                                                                                                                                                                       
+  *.pyo                                                                                                                                                                                                                                       
+  .venv/                                                                                                                                                                                                                                      
+  venv/                                                                                                                                                                                                                                       
+  *.egg-info/                                                                                                                                                                                                                                 
+  *.db                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                              
+  # Environment secrets                                                                                                                                                                                                                       
+  .env                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                              
+  # Node (frontend)                                                                                                                                                                                                                           
+  node_modules/
+  dist/
+  bun.lock
+
+  # OS files
+  .DS_Store
+  Thumbs.db                                                                                                                                                                                                                                   
+  
+  # IDE                                                                                                                                                                                                                                       
+  .vscode/                                                                                                                                                                                                                                  
+  .idea/
+

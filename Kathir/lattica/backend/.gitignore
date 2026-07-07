@@ -1,0 +1,13 @@
+# Environment secrets — NEVER commit this
+.env
+
+# Database
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/

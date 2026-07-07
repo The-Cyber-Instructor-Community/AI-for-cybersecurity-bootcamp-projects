@@ -1,0 +1,517 @@
+/* FindingsTable — results display */
+
+.findings-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Scan header */
+.scan-header {
+  padding: 1.5rem 2rem 0.75rem;
+}
+
+.scan-header h2 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
+.scan-meta {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   HNDL Model Explainer — togglable "How is this scored?" panel
+   --------------------------------------------------------------------------- */
+
+.explainer-section {
+  padding: 0 2rem 0.5rem;
+}
+
+.explainer-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.explainer-toggle:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+}
+
+.explainer-content {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  line-height: 1.6;
+}
+
+.explainer-content h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.explainer-content p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.75rem 0;
+}
+
+/* The big S × R × E = HNDL Risk formula display */
+.formula-display {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  justify-content: center;
+}
+
+.formula-var {
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-size: 1.3rem;
+}
+
+.formula-var.s { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+.formula-var.r { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+.formula-var.e { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+
+.formula-op {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.formula-result {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+/* S, R, E legend below the formula */
+.formula-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 1rem 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.formula-legend em {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.var-s { color: #818cf8; }
+.var-r { color: #c084fc; }
+.var-e { color: #fb923c; }
+
+/* Severity scale explanation */
+.severity-scale {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.severity-scale h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.scale-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scale-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.scale-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 70px;
+  text-align: center;
+}
+
+/* (Severity summary replaced by SeverityChart component) */
+
+/* ---------------------------------------------------------------------------
+   Filter tabs
+   --------------------------------------------------------------------------- */
+
+.filter-tabs {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.75rem 2rem 1rem;
+}
+
+.filter-tab {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-tab:hover {
+  background: var(--hover);
+  color: var(--text-primary);
+}
+
+.filter-tab.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.filter-count {
+  font-weight: 700;
+  margin-left: 0.3rem;
+  opacity: 0.7;
+}
+
+/* ---------------------------------------------------------------------------
+   Findings table
+   --------------------------------------------------------------------------- */
+
+.findings-table-wrapper {
+  overflow-x: auto;
+}
+
+.findings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.findings-table thead {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.findings-table th {
+  padding: 0.75rem 1.25rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.findings-table td {
+  padding: 0.75rem 1.25rem;
+}
+
+/* Clickable rows */
+.finding-row {
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.1s;
+}
+
+.finding-row:hover {
+  background: var(--hover);
+}
+
+/* Severity badge — larger text */
+.severity-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.finding-type {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.finding-value {
+  font-family: "SF Mono", "Fira Code", "Fira Mono", monospace;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+/* HNDL score cell — shows the score number + formula breakdown */
+.finding-score-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.score-number {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  display: block;
+}
+
+.score-formula {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 0.1rem;
+}
+
+.formula-s { color: #818cf8; font-weight: 600; }
+.formula-r { color: #c084fc; font-weight: 600; }
+.formula-e { color: #fb923c; font-weight: 600; }
+
+/* Expanded details row */
+.finding-details-row {
+  background: var(--bg);
+}
+
+.finding-details-row td {
+  padding: 0;
+}
+
+.finding-details {
+  padding: 1rem 1.25rem 1rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-item {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.detail-item strong {
+  color: var(--text-primary);
+  margin-right: 0.4rem;
+}
+
+.migration-notes {
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border-left: 3px solid var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   AI Deep Dive — remediation section within expanded row
+   --------------------------------------------------------------------------- */
+
+.deep-dive-section {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* "AI Deep Dive" trigger button */
+.deep-dive-btn {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 0.55rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.deep-dive-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Loading spinner while LLM is generating */
+.deep-dive-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Error state for failed remediation */
+.deep-dive-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  color: #fca5a5;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.deep-dive-retry {
+  background: none;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: inherit;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.deep-dive-retry:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Remediation response container */
+.deep-dive-response {
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.deep-dive-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1rem;
+  background: var(--accent-dim);
+  border-bottom: 1px solid var(--border);
+}
+
+.deep-dive-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.deep-dive-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Individual sections within the AI response */
+.deep-dive-block {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.deep-dive-block:last-child {
+  border-bottom: none;
+}
+
+.deep-dive-block strong {
+  display: block;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+
+.deep-dive-block p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* Migration steps often have numbered lists — preserve formatting */
+.deep-dive-steps {
+  font-family: inherit;
+  white-space: pre-wrap;
+}
+
+/* Loading and error states */
+.findings-loading,
+.findings-error {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.findings-error {
+  border-color: #ef4444;
+}
+
+.findings-error h3 {
+  color: #ef4444;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

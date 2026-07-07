@@ -1,0 +1,82 @@
+/* SeverityChart — donut chart + legend */
+
+.severity-chart {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.25rem 2rem;
+}
+
+.donut-svg {
+  width: 170px;
+  height: 170px;
+  flex-shrink: 0;
+}
+
+.donut-segment {
+  transition: opacity 0.15s;
+}
+
+.donut-segment:hover {
+  opacity: 0.8;
+}
+
+/* Center text inside the donut */
+.donut-total {
+  fill: var(--text-primary);
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.donut-label {
+  fill: var(--text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Legend next to the donut — with descriptions */
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.legend-count {
+  font-weight: 800;
+  color: var(--text-primary);
+  min-width: 1.75rem;
+  font-size: 1rem;
+}
+
+.legend-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-label {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.legend-desc {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: 0.1rem;
+}
