@@ -1,0 +1,31 @@
+<!-- AI-SOC-COPILOT-MONITORING: extends Wazuh's default macOS agent config,
+     which does not cover LaunchAgent persistence (T1547.011) or AppleScript
+     execution (T1059.002) out of the box. Applied by
+     scripts/configure-macos-monitoring.sh, which substitutes __HOME__ for
+     the real user's home directory before inserting this.
+
+     Note: Wazuh does not support real-time (FSEvents) FIM on macOS — the
+     realtime flag is silently ignored on this platform (confirmed via
+     Wazuh's own open issues #11712/#26639), and everything falls back to
+     scheduled scanning regardless. The default schedule is 12 hours, far
+     too slow for triggering a technique and expecting an alert soon after.
+     This overrides the scan frequency to 5 minutes for that reason — it
+     applies to the whole syscheck module (including the default system
+     directories already configured elsewhere), not just these two paths,
+     so it's a deliberate tradeoff of more CPU/disk I/O for faster feedback
+     during dataset generation, not something to leave at this frequency
+     on a machine you don't control. -->
+<syscheck>
+  <frequency>300</frequency>
+  <directories report_changes="yes">/Library/LaunchAgents,/Library/LaunchDaemons</directories>
+  <directories report_changes="yes">__HOME__/Library/LaunchAgents</directories>
+  <!-- T1546.004: shell startup files. report_changes captures the injected line
+       so the triage agent can judge it. -->
+  <directories report_changes="yes">__HOME__/.zshrc,__HOME__/.zprofile,__HOME__/.zshenv,__HOME__/.zlogin,__HOME__/.bash_profile,__HOME__/.bashrc,__HOME__/.profile</directories>
+</syscheck>
+
+<localfile>
+  <location>macos</location>
+  <log_format>macos</log_format>
+  <query type="trace,log,activity" level="info">(process == "osascript")</query>
+</localfile>

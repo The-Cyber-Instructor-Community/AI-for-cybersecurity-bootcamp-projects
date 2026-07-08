@@ -1,0 +1,109 @@
+<svg viewBox="0 0 740 700" xmlns="http://www.w3.org/2000/svg" role="img" width="740" height="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>AI SOC Co-pilot architecture</title>
+  <desc>A macOS endpoint's Wazuh agent sends FIM alerts to a Wazuh manager and OpenSearch indexer on a firewalled Hetzner VM. The orchestrator polls the indexer over an SSH tunnel and threads one CaseContext through three Claude agents (triage, response, notes). Triage uses enrichment tools and a RAG store; the response agent gates each action on Slack human approval; every stage streams to a live Flask dashboard. Secrets are injected by 1Password.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 8 8" markerWidth="7" markerHeight="7" refX="6" refY="4" orient="auto-start-reverse"><path d="M1,1 L6,4 L1,7 z" fill="#888780"/></marker>
+    <marker id="at" viewBox="0 0 8 8" markerWidth="7" markerHeight="7" refX="6" refY="4" orient="auto-start-reverse"><path d="M1,1 L6,4 L1,7 z" fill="#1D9E75"/></marker>
+    <marker id="ac" viewBox="0 0 8 8" markerWidth="7" markerHeight="7" refX="6" refY="4" orient="auto-start-reverse"><path d="M1,1 L6,4 L1,7 z" fill="#D85A30"/></marker>
+  </defs>
+  <rect x="0" y="0" width="740" height="700" fill="#ffffff"/>
+
+  <!-- legend -->
+  <g font-size="12.5" fill="#444441">
+    <rect x="34" y="8" width="12" height="12" rx="3" fill="#F1EFE8" stroke="#B4B2A9"/><text x="52" y="18">Detection &amp; infra</text>
+    <rect x="205" y="8" width="12" height="12" rx="3" fill="#EEEDFE" stroke="#7F77DD"/><text x="223" y="18">AI agent pipeline</text>
+    <rect x="372" y="8" width="12" height="12" rx="3" fill="#E1F5EE" stroke="#1D9E75"/><text x="390" y="18">Services &amp; UI</text>
+    <line x1="540" y1="14" x2="566" y2="14" stroke="#D85A30" stroke-width="2.5"/><text x="572" y="18">human approval</text>
+  </g>
+
+  <!-- endpoint fleet (stacked cards suggest many hosts) -->
+  <rect x="16" y="32" width="248" height="80" rx="9" fill="#F6F5F0" stroke="#C9C7BE"/>
+  <rect x="22" y="38" width="248" height="80" rx="9" fill="#F1EFE8" stroke="#B4B2A9"/>
+  <rect x="28" y="44" width="248" height="80" rx="9" fill="#F1EFE8" stroke="#B4B2A9"/>
+  <text x="152" y="72" font-size="15" font-weight="500" text-anchor="middle" fill="#2C2C2A">macOS endpoints</text>
+  <text x="152" y="92" font-size="12" text-anchor="middle" fill="#5F5E5A">Wazuh agents · fleet (×N)</text>
+  <text x="152" y="110" font-size="12" text-anchor="middle" fill="#5F5E5A">T1547.011 · T1546.004</text>
+
+  <!-- hetzner container -->
+  <rect x="330" y="40" width="312" height="150" rx="10" fill="none" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="5 4"/>
+  <text x="344" y="58" font-size="11.5" fill="#5F5E5A">Hetzner VM · firewalled</text>
+  <rect x="346" y="66" width="280" height="52" rx="8" fill="#F1EFE8" stroke="#B4B2A9"/>
+  <text x="486" y="88" font-size="14.5" font-weight="500" text-anchor="middle" fill="#2C2C2A">Wazuh manager</text>
+  <text x="486" y="106" font-size="11.5" text-anchor="middle" fill="#5F5E5A">rules D1-D5 + D4 correlation</text>
+  <rect x="346" y="130" width="280" height="48" rx="8" fill="#F1EFE8" stroke="#B4B2A9"/>
+  <text x="486" y="151" font-size="14.5" font-weight="500" text-anchor="middle" fill="#2C2C2A">OpenSearch indexer</text>
+  <text x="486" y="168" font-size="11.5" text-anchor="middle" fill="#5F5E5A">alerts store · :9200</text>
+
+  <!-- endpoint -> manager -->
+  <line x1="276" y1="86" x2="342" y2="90" stroke="#888780" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="309" y="80" font-size="11" text-anchor="middle" fill="#5F5E5A">agent channel</text>
+  <line x1="486" y1="118" x2="486" y2="130" stroke="#888780" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <!-- ssh tunnel -->
+  <line x1="470" y1="178" x2="415" y2="230" stroke="#888780" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a)"/>
+  <text x="486" y="208" font-size="11" fill="#5F5E5A">SSH tunnel · :9200/:55000</text>
+
+  <!-- orchestrator -->
+  <rect x="250" y="232" width="270" height="54" rx="9" fill="#EEEDFE" stroke="#7F77DD"/>
+  <text x="385" y="255" font-size="15" font-weight="500" text-anchor="middle" fill="#26215C">orchestrator.py</text>
+  <text x="385" y="273" font-size="12" text-anchor="middle" fill="#534AB7">watch → CaseContext</text>
+
+  <!-- 1password -->
+  <rect x="548" y="232" width="180" height="48" rx="8" fill="#F1EFE8" stroke="#B4B2A9"/>
+  <text x="638" y="253" font-size="13.5" font-weight="500" text-anchor="middle" fill="#2C2C2A">1Password</text>
+  <text x="638" y="270" font-size="11.5" text-anchor="middle" fill="#5F5E5A">secrets · op run</text>
+  <line x1="548" y1="258" x2="522" y2="260" stroke="#888780" stroke-width="1" stroke-dasharray="2 3"/>
+
+  <!-- agents -->
+  <rect x="259" y="322" width="252" height="78" rx="9" fill="#EEEDFE" stroke="#7F77DD"/>
+  <text x="385" y="345" font-size="14.5" font-weight="500" text-anchor="middle" fill="#26215C">Triage agent</text>
+  <text x="385" y="364" font-size="12" text-anchor="middle" fill="#534AB7">Claude Sonnet · tools + RAG</text>
+  <text x="385" y="382" font-size="12" text-anchor="middle" fill="#534AB7">→ verdict + confidence</text>
+  <rect x="259" y="424" width="252" height="78" rx="9" fill="#EEEDFE" stroke="#7F77DD"/>
+  <text x="385" y="447" font-size="14.5" font-weight="500" text-anchor="middle" fill="#26215C">Response agent</text>
+  <text x="385" y="466" font-size="12" text-anchor="middle" fill="#534AB7">Claude Haiku · per-action consent</text>
+  <text x="385" y="484" font-size="12" text-anchor="middle" fill="#534AB7">guarded exec · evidence first</text>
+  <rect x="259" y="526" width="252" height="58" rx="9" fill="#EEEDFE" stroke="#7F77DD"/>
+  <text x="385" y="549" font-size="14.5" font-weight="500" text-anchor="middle" fill="#26215C">Notes agent</text>
+  <text x="385" y="568" font-size="12" text-anchor="middle" fill="#534AB7">Claude Haiku → cases/*.md</text>
+
+  <!-- pipeline arrows -->
+  <line x1="385" y1="286" x2="385" y2="322" stroke="#888780" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="385" y1="400" x2="385" y2="424" stroke="#888780" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="430" y="416" font-size="11" fill="#5F5E5A">if actionable</text>
+  <line x1="385" y1="502" x2="385" y2="526" stroke="#888780" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <!-- left services -->
+  <rect x="28" y="322" width="200" height="78" rx="9" fill="#E1F5EE" stroke="#1D9E75"/>
+  <text x="128" y="345" font-size="14" font-weight="500" text-anchor="middle" fill="#04342C">Enrichment tools</text>
+  <text x="128" y="364" font-size="11.5" text-anchor="middle" fill="#0F6E56">codesign · VirusTotal</text>
+  <text x="128" y="382" font-size="11.5" text-anchor="middle" fill="#0F6E56">path/proc/net · history</text>
+  <line x1="228" y1="361" x2="259" y2="361" stroke="#1D9E75" stroke-width="1.4" marker-end="url(#at)"/>
+  <rect x="28" y="424" width="200" height="58" rx="9" fill="#E1F5EE" stroke="#1D9E75"/>
+  <text x="128" y="447" font-size="14" font-weight="500" text-anchor="middle" fill="#04342C">RAG store</text>
+  <text x="128" y="466" font-size="11.5" text-anchor="middle" fill="#0F6E56">Chroma + MiniLM (local)</text>
+  <line x1="228" y1="446" x2="259" y2="388" stroke="#1D9E75" stroke-width="1.4" marker-end="url(#at)"/>
+
+  <!-- llm backend (pluggable) -->
+  <rect x="544" y="358" width="196" height="96" rx="9" fill="#E1F5EE" stroke="#1D9E75"/>
+  <text x="642" y="386" font-size="14.5" font-weight="500" text-anchor="middle" fill="#04342C">LLM backend</text>
+  <text x="642" y="406" font-size="11.5" text-anchor="middle" fill="#0F6E56">Claude API · Sonnet/Haiku</text>
+  <text x="642" y="424" font-size="11.5" text-anchor="middle" fill="#0F6E56">or Foundation-Sec-8B (on-prem)</text>
+  <line x1="544" y1="386" x2="511" y2="360" stroke="#1D9E75" stroke-width="1.3" marker-end="url(#at)"/>
+  <line x1="544" y1="410" x2="511" y2="460" stroke="#1D9E75" stroke-width="1.3" marker-end="url(#at)"/>
+  <line x1="544" y1="432" x2="511" y2="552" stroke="#1D9E75" stroke-width="1.3" marker-end="url(#at)"/>
+
+  <!-- slack -->
+  <rect x="548" y="476" width="192" height="74" rx="9" fill="#E1F5EE" stroke="#1D9E75"/>
+  <text x="644" y="500" font-size="14.5" font-weight="500" text-anchor="middle" fill="#04342C">Slack</text>
+  <text x="644" y="519" font-size="11.5" text-anchor="middle" fill="#0F6E56">Approve / Reject</text>
+  <text x="644" y="537" font-size="11.5" text-anchor="middle" fill="#0F6E56">human-in-the-loop</text>
+  <line x1="548" y1="492" x2="511" y2="470" stroke="#D85A30" stroke-width="2" marker-start="url(#ac)" marker-end="url(#ac)"/>
+
+  <!-- dashboard -->
+  <rect x="200" y="616" width="340" height="56" rx="9" fill="#E1F5EE" stroke="#1D9E75"/>
+  <text x="370" y="640" font-size="14.5" font-weight="500" text-anchor="middle" fill="#04342C">Live dashboard</text>
+  <text x="370" y="659" font-size="11.5" text-anchor="middle" fill="#0F6E56">Flask + SSE · live case stream</text>
+  <line x1="330" y1="584" x2="352" y2="616" stroke="#1D9E75" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#at)"/>
+  <text x="300" y="604" font-size="11" text-anchor="end" fill="#5F5E5A">stage events (SSE)</text>
+</svg>

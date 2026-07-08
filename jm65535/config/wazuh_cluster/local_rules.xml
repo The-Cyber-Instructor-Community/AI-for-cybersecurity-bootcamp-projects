@@ -1,0 +1,145 @@
+<!--
+  AI-SOC-COPILOT — custom Wazuh manager rules.
+
+  Mounted into the manager at /var/ossec/etc/rules/local_rules.xml. Purpose:
+  fire TECHNIQUE-CLASSIFIED, MITRE-tagged alerts on OBSERVABLE signals only
+  (file path, process, cross-event correlation). Content analysis (signing,
+  dropped-file hashes, VirusTotal, network) is intentionally NOT done here — it
+  happens in the post-alert enrichment step (collect_forensics). See
+  docs/DETECTION_RESPONSE_DESIGN.md for the full design (D1–D5, scoring, routing).
+
+  Rule ids 100000–120000 are the local/custom range reserved by Wazuh.
+
+  Detections implemented here:
+    D1  100010/100011/100012  LaunchAgent add/modify/delete (user/login scope)
+    D2  100013                LaunchDaemon add/modify       (system/root scope)
+    D3  100020/100021         osascript execution           (PROVISIONAL)
+    D4  100030                persistence -> osascript correlation (critical)
+-->
+
+<group name="ai_soc_copilot,macos,">
+
+  <!-- ==================================================================
+       D1 — T1547.011 LaunchAgent persistence (user / login scope)
+       Children of Wazuh FIM rules: 554 add, 550 modify, 553 delete.
+       Path covers both /Library/LaunchAgents and ~/Library/LaunchAgents —
+       login-context autostart, not root-at-boot (that's D2).
+       =================================================================== -->
+
+  <rule id="100010" level="8">
+    <if_sid>554</if_sid>
+    <field name="file">Library/LaunchAgents/</field>
+    <description>D1 T1547.011: LaunchAgent plist ADDED (login persistence): $(file)</description>
+    <mitre>
+      <id>T1547.011</id>
+    </mitre>
+    <group>persistence,launch_agent,</group>
+  </rule>
+
+  <rule id="100011" level="8">
+    <if_sid>550</if_sid>
+    <field name="file">Library/LaunchAgents/</field>
+    <description>D1 T1547.011: LaunchAgent plist MODIFIED (login persistence): $(file)</description>
+    <mitre>
+      <id>T1547.011</id>
+    </mitre>
+    <group>persistence,launch_agent,</group>
+  </rule>
+
+  <rule id="100012" level="5">
+    <if_sid>553</if_sid>
+    <field name="file">Library/LaunchAgents/</field>
+    <description>T1547.011: LaunchAgent plist DELETED (audit): $(file)</description>
+    <mitre>
+      <id>T1547.011</id>
+    </mitre>
+    <group>persistence,launch_agent,</group>
+  </rule>
+
+  <!-- ==================================================================
+       D2 — T1547.011 LaunchDaemon persistence (system / root scope)
+       Higher base severity: LaunchDaemons run as root at boot. Add+modify.
+       =================================================================== -->
+
+  <rule id="100013" level="12">
+    <if_sid>554,550</if_sid>
+    <field name="file">Library/LaunchDaemons/</field>
+    <description>D2 T1547.011: LaunchDaemon plist added/modified (ROOT boot persistence): $(file)</description>
+    <mitre>
+      <id>T1547.011</id>
+    </mitre>
+    <group>persistence,launch_daemon,</group>
+  </rule>
+
+  <!-- ==================================================================
+       D3 — T1059.002 AppleScript execution via osascript
+       PROVISIONAL — only FIM was verified in Phase 1; how Wazuh decodes the
+       macOS unified-log osascript event on this host is unconfirmed. 100020
+       assumes a JSON-decoded process field; 100021 is a broad fallback that
+       matches the osascript token anywhere in the macos log. Validate against
+       a live sample and consolidate (see DETECTION_RESPONSE_DESIGN.md).
+       =================================================================== -->
+
+  <rule id="100020" level="6">
+    <decoded_as>json</decoded_as>
+    <field name="process">osascript</field>
+    <description>D3 T1059.002: AppleScript execution via osascript (process match)</description>
+    <mitre>
+      <id>T1059.002</id>
+    </mitre>
+    <group>execution,applescript,</group>
+  </rule>
+
+  <rule id="100021" level="5">
+    <if_group>macos</if_group>
+    <match>osascript</match>
+    <description>D3 T1059.002: osascript observed in macOS unified log (broad match)</description>
+    <mitre>
+      <id>T1059.002</id>
+    </mitre>
+    <group>execution,applescript,</group>
+  </rule>
+
+  <!-- ==================================================================
+       D5 — T1546.004 Unix Shell Configuration Modification (persistence)
+       A shell startup file (.zshrc/.zprofile/.zshenv/.bash_profile/...) is
+       created or modified. Legitimate software rarely rewrites these to
+       auto-run code at every shell launch, so the modification itself is the
+       signal; report_changes captures the injected line for the agent to judge.
+       Children of Wazuh FIM rules 554 (add) / 550 (modify).
+       =================================================================== -->
+
+  <rule id="100014" level="10">
+    <if_sid>554,550</if_sid>
+    <field name="file" type="pcre2">/\.(zshrc|zprofile|zshenv|zlogin|bash_profile|bashrc|profile)$</field>
+    <description>D5 T1546.004: shell startup file created/modified (persistence): $(file)</description>
+    <mitre>
+      <id>T1546.004</id>
+    </mitre>
+    <group>persistence,shell_config,</group>
+  </rule>
+
+  <!-- ==================================================================
+       D4 — Correlated multi-vector persistence (high confidence, critical)
+       Fires when TWO persistence-group events (D1/D2/D5) occur within 10 min
+       on the host — e.g. a LaunchAgent drop AND a shell-config modification.
+       A single persistence event is often a benign installer; multiple
+       persistence mechanisms established in a short window is an attacker
+       entrenching. Single-agent deployment, so same-host scoping is implicit
+       (add <same_field> when multiple agents exist).
+
+       NOTE: frequency must be 2..9999 (the earlier frequency=1 broke
+       analysisd). Validate load with `wazuh-analysisd -t` after deploy.
+       =================================================================== -->
+
+  <rule id="100030" level="14" frequency="2" timeframe="600">
+    <if_matched_group>persistence</if_matched_group>
+    <description>D4: multiple persistence mechanisms established within 10 min on one host (multi-vector persistence campaign)</description>
+    <mitre>
+      <id>T1547.011</id>
+      <id>T1546.004</id>
+    </mitre>
+    <group>persistence,correlation,</group>
+  </rule>
+
+</group>

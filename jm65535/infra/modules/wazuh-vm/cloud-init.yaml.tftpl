@@ -1,0 +1,66 @@
+#cloud-config
+# Shared provisioning logic for the Wazuh VM — identical across cloud providers.
+# Provider-specific Terraform (hetzner/, digitalocean/) only supplies the VM + firewall;
+# everything about *what runs on the box* lives here so the deployment is portable.
+
+package_update: true
+package_upgrade: true
+
+users:
+  - name: deploy
+    groups: [sudo, docker]
+    shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+
+packages:
+  - unattended-upgrades
+  - fail2ban
+  - ufw
+  - git
+  - ca-certificates
+  - curl
+
+write_files:
+  # OpenSearch (Wazuh indexer) requires this kernel setting or it will refuse to start.
+  - path: /etc/sysctl.d/99-wazuh-indexer.conf
+    content: |
+      vm.max_map_count=262144
+
+  # Local firewall as defense-in-depth behind the cloud provider's firewall.
+  # Cloud firewall (see firewall.tf in each provider dir) is the primary control —
+  # this is a second layer in case that's ever misconfigured.
+  - path: /etc/ufw/ufw-wazuh-rules.sh
+    permissions: "0755"
+    content: |
+      #!/bin/bash
+      ufw default deny incoming
+      ufw default allow outgoing
+      ufw allow 22/tcp    # SSH — cloud firewall further restricts this to admin IP
+      ufw allow 1514/tcp  # Wazuh agent registration
+      ufw allow 1515/tcp  # Wazuh agent enrollment
+      ufw allow 443/tcp   # Wazuh dashboard — cloud firewall restricts this to admin IP
+      ufw --force enable
+
+runcmd:
+  - sysctl -w vm.max_map_count=262144
+  - systemctl enable unattended-upgrades
+  - systemctl enable fail2ban
+  - bash /etc/ufw/ufw-wazuh-rules.sh
+
+  # Harden SSH: key-only auth, no root login.
+  - sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+  - systemctl restart sshd
+
+  # Docker
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker deploy
+
+  # Wazuh single-node stack — pinned version, verify against
+  # https://github.com/wazuh/wazuh-docker/releases before applying in case a newer
+  # patch has shipped since this template was written.
+  - git clone --branch ${wazuh_docker_version} --depth 1 https://github.com/wazuh/wazuh-docker.git /opt/wazuh-docker
+  - cd /opt/wazuh-docker/single-node && docker compose -f generate-indexer-certs.yml run --rm generator
+  - cd /opt/wazuh-docker/single-node && docker compose up -d

@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars and fill in — or better, pass do_token via
+# TF_VAR_do_token env var (e.g. exported from 1Password, see docs/SETUP.md)
+# so it never sits in a file at all.
+
+ssh_public_key = "ssh-ed25519 AAAA... your-key-here"
+admin_cidr     = "203.0.113.7/32"   # run: curl ifconfig.me

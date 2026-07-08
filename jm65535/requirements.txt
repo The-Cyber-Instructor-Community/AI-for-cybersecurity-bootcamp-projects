@@ -1,0 +1,16 @@
+# Python dependencies for the AI-SOC-Copilot pipeline.
+# Install into a venv:  python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+
+anthropic            # Claude API — triage/response/notes agent decision-making
+slack-bolt           # Slack Socket Mode app — interactive Approve/Reject approval
+websocket-client     # Socket Mode transport used by slack-bolt's SocketModeHandler
+pyyaml               # parse playbook frontmatter
+requests             # Wazuh indexer/API + VirusTotal HTTP calls
+chromadb             # embedded vector store for RAG (bundles onnx all-MiniLM-L6-v2)
+
+# Note: RAG embeddings use Chroma's built-in onnx all-MiniLM-L6-v2 (no PyTorch).
+# sentence-transformers is only needed for the Foundation-Sec-8B stretch goal:
+# sentence-transformers
+certifi              # CA bundle for Slack SSL verification on macOS
+flask                # live dashboard UI service (ui/app.py)
+markdown             # render case notes to HTML in the dashboard panel

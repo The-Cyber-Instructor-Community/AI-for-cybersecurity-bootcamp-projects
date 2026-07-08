@@ -1,0 +1,59 @@
+{
+  "n_cases": 86,
+  "gt_dist": {
+    "ambiguous": 33,
+    "malicious": 39,
+    "benign": 14
+  },
+  "cols": [
+    "accuracy",
+    "malicious_f1",
+    "over_trigger_rate",
+    "avg_latency"
+  ],
+  "local_id": "hf.co/gabriellarson/Foundation-Sec-8B-Instruct-GGUF:Q4_K_M",
+  "arms": {
+    "Claude": {
+      "accuracy": 0.651,
+      "malicious_f1": 0.733,
+      "over_trigger_rate": 0.383,
+      "avg_latency": 2.89
+    },
+    "Claude + RAG": {
+      "accuracy": 0.802,
+      "malicious_f1": 0.857,
+      "over_trigger_rate": 0.191,
+      "avg_latency": 3.08
+    },
+    "FoundationSec": {
+      "accuracy": 0.756,
+      "malicious_f1": 0.853,
+      "over_trigger_rate": 0.085,
+      "avg_latency": 7.56
+    },
+    "FoundationSec + RAG": {
+      "accuracy": 0.709,
+      "malicious_f1": 0.831,
+      "over_trigger_rate": 0.128,
+      "avg_latency": 11.0
+    },
+    "FoundationSec-LoRA": {
+      "n": 86,
+      "accuracy": 0.674,
+      "malicious_precision": 0.889,
+      "malicious_recall": 0.615,
+      "malicious_f1": 0.727,
+      "over_trigger_rate": 0.064,
+      "avg_latency": 6.53
+    },
+    "FoundationSec-LoRA + RAG": {
+      "n": 86,
+      "accuracy": 0.663,
+      "malicious_precision": 0.867,
+      "malicious_recall": 0.667,
+      "malicious_f1": 0.754,
+      "over_trigger_rate": 0.085,
+      "avg_latency": 9.72
+    }
+  }
+}

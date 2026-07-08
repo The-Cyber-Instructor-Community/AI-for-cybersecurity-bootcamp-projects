@@ -1,0 +1,49 @@
+# Secrets — never commit real values, .env should only ever contain op:// references
+.env
+*.tfvars
+!*.tfvars.example
+
+# Terraform state (contains resource IDs/IPs — keep local or use remote state backend)
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Data / generated artifacts
+data/*.jsonl
+!data/.gitkeep
+cases/*.md
+cases/*.json
+!cases/.gitkeep
+chroma_db/
+*.log
+
+# Downloaded agent installer (large binary; fetched by install-macos-agent.sh)
+*.pkg
+
+# OS
+.DS_Store
+
+# watch-mode dedup state
+.aisoc_watch_seen.json
+
+# Fine-tune experiment artifacts (large or reproducible via finetune/build_ft_data.py)
+finetune/data/
+finetune/adapters/
+finetune/fused/
+finetune/base-4bit/
+finetune/*.gguf
+
+# Local-only (kept on disk for reference, excluded from the repo + bundle)
+PROGRESS.md
+.claude/
+
+# Proof-of-work screenshots — bundled into the submission zip directly, not tracked
+screenshots/
