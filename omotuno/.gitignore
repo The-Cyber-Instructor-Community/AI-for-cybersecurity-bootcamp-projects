@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+.pytest_cache/
+Sift_Capstone_Requirements.md
+data/*.sqlite
+data/*.sqlite

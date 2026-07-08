@@ -1,0 +1,11 @@
+[
+  {
+    "timestamp": "2026-07-01T00:00:00Z",
+    "rule": {"id": "5710", "description": "sshd authentication failed"},
+    "full_log": "sshd: Failed password for root from 10.0.0.10 port 22 ssh2",
+    "srcip": "10.0.0.10",
+    "srcuser": "root",
+    "event_type": "ssh_auth_failure",
+    "synthetic": false
+  }
+]
