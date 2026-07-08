@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoRedTeam Report — 192.168.128.2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #0f172a; color: #e2e8f0; line-height: 1.6; }
+  .header { background: linear-gradient(135deg, #1e293b, #0f172a);
+             border-bottom: 1px solid #334155; padding: 2rem; }
+  .header h1 { font-size: 1.8rem; color: #38bdf8; }
+  .header .meta { color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  .dashboard { display: grid; grid-template-columns: repeat(4, 1fr);
+                gap: 1rem; margin: 2rem 0; }
+  .card { background: #1e293b; border-radius: 8px; padding: 1.5rem;
+           text-align: center; border-top: 3px solid; }
+  .card.critical { border-color: #dc2626; }
+  .card.high     { border-color: #ea580c; }
+  .card.medium   { border-color: #ca8a04; }
+  .card.low      { border-color: #16a34a; }
+  .card .count { font-size: 3rem; font-weight: bold; }
+  .card.critical .count { color: #dc2626; }
+  .card.high     .count { color: #ea580c; }
+  .card.medium   .count { color: #ca8a04; }
+  .card.low      .count { color: #16a34a; }
+  .card .label { color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;
+                  letter-spacing: 1px; margin-top: 0.3rem; }
+  .section { margin: 2rem 0; }
+  .section h2 { font-size: 1.3rem; color: #38bdf8; border-bottom: 1px solid #334155;
+                 padding-bottom: 0.5rem; margin-bottom: 1rem; }
+  .finding { background: #1e293b; border-radius: 8px; margin: 1rem 0;
+              border-left: 4px solid; overflow: hidden; }
+  .finding.critical { border-color: #dc2626; }
+  .finding.high     { border-color: #ea580c; }
+  .finding.medium   { border-color: #ca8a04; }
+  .finding.low      { border-color: #16a34a; }
+  .finding-header { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .badge { padding: 0.2rem 0.7rem; border-radius: 4px; font-size: 0.75rem;
+            font-weight: bold; text-transform: uppercase; }
+  .badge.critical { background: #dc2626; color: white; }
+  .badge.high     { background: #ea580c; color: white; }
+  .badge.medium   { background: #ca8a04; color: white; }
+  .badge.low      { background: #16a34a; color: white; }
+  .finding-title { font-weight: 600; font-size: 1rem; }
+  .finding-body { padding: 0 1.5rem 1.5rem; color: #cbd5e1; }
+  .finding-body strong { color: #e2e8f0; }
+  .finding-body p { margin: 0.4rem 0; font-size: 0.9rem; }
+  pre { background: #0f172a; padding: 1rem; border-radius: 6px; overflow-x: auto;
+         font-size: 0.82rem; color: #a3e635; margin: 0.5rem 0; }
+  .exec-summary { background: #1e293b; border-radius: 8px; padding: 1.5rem;
+                   color: #cbd5e1; font-size: 0.95rem; }
+  .remediation { background: #1e293b; border-radius: 8px; padding: 1.5rem; margin: 0.8rem 0; }
+  .remediation h3 { color: #38bdf8; margin-bottom: 0.8rem; font-size: 0.95rem; }
+  .footer { text-align: center; color: #475569; font-size: 0.8rem; padding: 2rem;
+             border-top: 1px solid #1e293b; margin-top: 3rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>AutoRedTeam Pentest Report</h1>
+  <div class="meta">
+    Target: <strong>192.168.128.2</strong> &nbsp;|&nbsp;
+    Date: <strong>2026-07-07</strong> &nbsp;|&nbsp;
+    Assessed By: <strong>AutoRedTeam AI Agent</strong>
+  </div>
+</div>
+<div class="container">
+  <div class="dashboard">
+    <div class="card critical"><div class="count">0</div><div class="label">Critical</div></div>
+    <div class="card high">   <div class="count">0</div>   <div class="label">High</div></div>
+    <div class="card medium"> <div class="count">0</div> <div class="label">Medium</div></div>
+    <div class="card low">    <div class="count">1</div>    <div class="label">Low</div></div>
+  </div>
+
+  <div class="section">
+    <h2>Executive Summary</h2>
+    <div class="exec-summary">A comprehensive security assessment was conducted against the internal host at **192.168.128.2**, encompassing passive reconnaissance, active port scanning across all 65,535 TCP ports, web application probing, and SMB/NetBIOS enumeration. The target host returned **no open ports, no service banners, and no SMB null session exposure** across all tested protocols and port ranges. The host is either **offline, heavily firewalled (all ports filtered/dropped), behind a network-level access control list, or the IP is unassigned** within the 192.168.128.0/24 subnet. No exploitable vulnerabilities were identified due to the complete absence of reachable services. The risk posture cannot be fully assessed until the host's network accessibility is confirmed and remediated scanning conditions are established.<br><br>---<br><br>## Reconnaissance<br><br>- **WHOIS:** Private RFC-1918 address space — `192.168.0.0–192.168.255.255` (No org, ASN, or abuse contact — internal network range, not publicly routable)<br>- **Reverse DNS:** No PTR record found — hostname not resolvable<br>- **DNS Records:** N/A — private IP address, no public DNS records present<br>- **Subdomains found:** None — not applicable for IP target<br>- **OSINT (theHarvester):** Skipped — IP target (theHarvester is domain-only)<br><br>---</div>
+  </div>
+
+  <div class="section">
+    <h2>Findings</h2>
+    <div class="finding low">
+  <div class="finding-header">
+    <span class="badge low">LOW</span>
+    <span class="finding-title">No Reverse DNS / PTR Record for Internal Host</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** DNS — port 53 (no PTR record)</p>
+<p>CVE:** N/A</p>
+<p>ExploitDB:** N/A</p>
+<p>Description:** The host at 192.168.128.2 has no reverse DNS (PTR) record configured. While this is common for internal hosts, the absence of DNS records limits network inventory management and incident response capabilities. In environments where internal DNS is maintained, all hosts should have resolvable PTR records to assist with logging, alerting, and forensic analysis.</p>
+<p>Evidence:** `dns_recon(192.168.128.2)` → `reverse_dns: ""`, `records: {}`</p>
+<p>Exploited:** NO</p>
+<p>AI Analysis:** N/A</p>
+<p>Recommendation:** Configure a PTR record in the internal DNS zone for 192.168.128.2 (e.g., `2.128.168.192.in-addr.arpa → hostname.internal.domain`). This improves auditability, log correlation, and network visibility.</p>
+<p>ATT&CK:** T1590.002 — Gather Victim Network Information: DNS (lack of internal DNS hygiene increases adversary reconnaissance difficulty but reduces defender visibility)</p>
+<p>---</p>
+<p>## Exploitation Evidence</p>
+<p>> <strong>No exploitation was performed.</strong> The target host returned no open ports or reachable services across all protocols and scan types. There were no active sessions opened, no shells obtained, and no credentials captured. Exploitation requires a reachable and responsive attack surface.</p>
+<p>---</p>
+  </div>
+</div>
+
+  </div>
+
+  <div class="section"><h2>Remediation Playbook</h2><div class="remediation"><h3>Fix: Host Unreachable / All Ports Filtered — Incomplete Attack Surface Assessment</h3><p><strong>Severity:</strong> MEDIUM</p>
+<p><strong>Effort:</strong> Quick</p>
+<p><strong>Remediation Commands:</strong></p>
+<pre>
+# Step 1: Verify host is online and reachable from scanner
+ping -c 4 192.168.128.2
+
+# Step 2: Check if host is assigned the correct IP via DHCP/static config
+# On the target host (192.168.128.2), run:
+ip addr show
+hostname
+
+# Step 3: If host is online, inspect host-based firewall rules
+# On Ubuntu/Debian target:
+sudo ufw status verbose
+sudo iptables -L -n -v
+sudo iptables -L -n -v | grep -i drop
+
+# Step 4: If firewall is blocking, open required ports for testing
+# Example: Allow SSH (22), HTTP (80), HTTPS (443) from scanner subnet
+sudo ufw allow from 192.168.128.1/24 to any port 22
+sudo ufw allow from 192.168.128.1/24 to any port 80
+sudo ufw allow from 192.168.128.1/24 to any port 443
+sudo ufw reload
+
+# Alternative (iptables): Insert ACCEPT rules before DROP rules
+sudo iptables -I INPUT -s 192.168.128.1/24 -p tcp --dport 22 -j ACCEPT
+sudo iptables -I INPUT -s 192.168.128.1/24 -p tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT -s 192.168.128.1/24 -p tcp --dport 443 -j ACCEPT
+
+# Step 5: Verify routing between scanner and target
+traceroute 192.168.128.2
+route -n | grep 192.168.128.0
+
+# Step 6: If using VM, confirm VM is powered on and connected to correct network
+# On hypervisor (KVM/VirtualBox):
+virsh list --all  # For KVM
+VBoxManage list vms --long  # For VirtualBox
+
+# Step 7: Re-run nmap to confirm connectivity
+nmap -sV -sC -p 22,80,443 192.168.128.2
+</pre>
+<p><strong>Verification Commands:</strong></p>
+<pre>
+# Verify host responds to ping
+ping -c 4 192.168.128.2 | grep "bytes from"
+
+# Verify nmap now detects open ports (should show at least port 22 or 80)
+nmap -p 22,80,443 192.168.128.2 | grep -E "open|filtered|closed"
+
+# Verify SSH connectivity (if port 22 is open)
+timeout 5 ssh -v 192.168.128.2 2&gt;&1 | grep -E "Connection refused|Connection accepted|OpenSSH"
+
+# Verify HTTP connectivity (if port 80 is open)
+curl -v http://192.168.128.2:80 2&gt;&1 | grep -E "Connected|Connection refused|200|301|302"
+
+# Verify firewall rules are correctly applied
+sudo ufw status | grep "22\|80\|443"
+sudo iptables -L -n -v | grep -E "192.168.128.1|ACCEPT"
+
+# Confirm host IP matches target IP
+dig +short 192.168.128.2 @192.168.128.1  # From scanner, attempt reverse lookup
+</pre>
+<p>---</p></div><div class="remediation"><h3>Fix: No Reverse DNS / PTR Record for Internal Host</h3><p><strong>Severity:</strong> LOW</p>
+<p><strong>Effort:</strong> Quick</p>
+<p><strong>Remediation Commands:</strong></p>
+<pre>
+# Step 1: On the DNS server (assumed to be 192.168.128.1 or another authoritative DNS), 
+# edit the reverse DNS zone file for 128.168.192.in-addr.arpa
+
+# For BIND9 (most common on Linux):
+sudo nano /etc/bind/zones/db.128.168.192.in-addr.arpa
+
+# Step 2: Add a PTR record for 192.168.128.2 in the reverse zone file.
+# Example content (add this line to the zone file):
+cat &lt;&lt; 'EOF' | sudo tee -a /etc/bind/zones/db.128.168.192.in-addr.arpa
+2    IN    PTR    target-host.internal.domain.
+EOF
+
+# Step 3: Increment the SOA serial number in the reverse zone file
+# (increase the serial number by 1, e.g., from 2024010101 to 2024010102)
+sudo sed -i 's/^[[:space:]]*[0-9]\{10\}[[:space:]]*;[[:space:]]*Serial/                        2024010102 ; Serial/' /etc/bind/zones/db.128.168.192.in-addr.arpa
+
+# Step 4: Verify BIND9 zone syntax
+sudo named-checkzone 128.168.192.in-addr.arpa /etc/bind/zones/db.128.168.192.in-addr.arpa
+
+# Step 5: Reload BIND9 to apply changes
+sudo systemctl reload bind9
+
+# Alternative for dnsmasq (if used for internal DNS):
+# Add to /etc/dnsmasq.conf:
+echo "address=192.168.128.2,target-host.internal.domain" | sudo tee -a /etc/dnsmasq.conf
+sudo systemctl reload dnsmasq
+
+# Alternative for systemd-resolved:
+# Edit /etc/systemd/resolved.conf and restart:
+sudo systemctl restart systemd-resolved
+</pre>
+<p><strong>Verification Commands:</strong></p>
+<pre>
+# Verify PTR record is resolvable from scanner
+nslookup 192.168.128.2 192.168.128.1
+dig -x 192.168.128.2 @192.168.128.1
+
+# Confirm reverse DNS returns a hostname (not "NXDOMAIN")
+host 192.168.128.2 192.168.128.1 | grep -v "NXDOMAIN"
+
+# Verify zone file syntax is correct
+sudo named-checkzone 128.168.192.in-addr.arpa /etc/bind/zones/db.128.168.192.in-addr.arpa | grep "OK"
+
+# Verify BIND9 is running and reloaded
+sudo systemctl status bind9 | grep "active (running)"
+
+# Perform a full reverse lookup to confirm PTR record exists
+dig +nocmd +noall +answer -x 192.168.128.2 @192.168.128.1 | grep PTR
+</pre>
+<p>---</p></div></div>
+
+</div>
+<div class="footer">
+  Generated by AutoRedTeam AI Agent &nbsp;|&nbsp; 2026-07-07
+</div>
+</body>
+</html>

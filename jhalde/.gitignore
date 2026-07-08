@@ -1,0 +1,34 @@
+# Secrets — never commit these
+.env
+
+# ChromaDB local vector store (large, rebuilds from source data)
+chroma_db/
+
+# Downloaded raw data (large, re-downloadable)
+data/enterprise-attack.json
+data/nvd_*.json
+
+# Generated dataset IS committed (small, represents your work)
+# data/finetune_dataset.jsonl  ← tracked by git
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# Fine-tuning artifacts (Day 2)
+models/
+*.safetensors
+*.bin
+
+# Nikto output files
+nikto_*.txt
+
+# Reports for targets outside the lab (not for public commit)
+reports/report_villatortuga*
+reports/report_www_villatortuga*

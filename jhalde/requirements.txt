@@ -1,0 +1,29 @@
+# AutoRedTeam - Day 1: RAG Pipeline
+# Install with: pip install -r requirements.txt
+
+# Core RAG
+chromadb>=0.6.0
+sentence-transformers>=3.0.1
+
+# HTTP + data handling
+requests==2.32.3
+tqdm==4.66.4
+
+# MITRE ATT&CK
+mitreattack-python==3.0.5
+
+# Utils
+python-dotenv==1.0.1
+rich==13.7.1          # pretty terminal output
+
+# Day 2 — dataset generation
+anthropic>=0.40.0
+
+# Day 2+ (fine-tuning) — install when you reach Day 2
+# unsloth[colab-new]
+# peft
+# trl
+# bitsandbytes
+
+# Day 3 — MCP server
+mcp>=1.0.0
