@@ -36,6 +36,50 @@ $ python3 -m agent.agent 127.0.0.1 --ports 2121,2222,8080,44500,33060,18180
 
 ---
 
+## Agent Flow
+
+```
+  TARGET IP + PORTS
+        │
+        ▼
+┌───────────────────────────────────────────────────────────┐
+│              Claude Sonnet (Orchestrator)                  │
+│         Decides next tool → calls it → analyses output    │
+└───────────────────────────────────────────────────────────┘
+        │
+        │  ┌─────────────────────────────────────────────┐
+        │  │           5-Phase Workflow                   │
+        │  └─────────────────────────────────────────────┘
+        │
+        ├──▶  PHASE 1: PASSIVE RECON
+        │         whois → dns_recon → theHarvester
+        │         (no packets sent to target)
+        │
+        ├──▶  PHASE 2: ACTIVE SCAN
+        │         nmap (service/version) → nikto (web) →
+        │         gobuster (dirs) → enum4linux (SMB/users)
+        │              │
+        │         [Kali MCP if reachable] ──▶ hydra, sqlmap,
+        │              │                       masscan, ffuf
+        │              │
+        │         [fallback: local tools]
+        │
+        ├──▶  PHASE 3: INTELLIGENCE
+        │         searchsploit → CVE RAG (2000+ CVEs) →
+        │         fine-tuned Llama 3.1 8B analysis →
+        │         ATT&CK RAG (697 TTPs)
+        │
+        ├──▶  PHASE 4: EXPLOITATION (suggest only)
+        │         Metasploit RPC → stage modules →
+        │         map exploits to open ports
+        │         (never executes automatically)
+        │
+        └──▶  PHASE 5: REPORT
+                  Markdown report → HTML dashboard →
+                  remediation playbooks → ATT&CK mapping
+                  → saved to reports/
+```
+
 ## Architecture
 
 ```
