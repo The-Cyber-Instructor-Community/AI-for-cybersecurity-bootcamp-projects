@@ -1,0 +1,14 @@
+binary,vulnerable
+vuln01_strcpy,1
+vuln02_gets,1
+vuln03_sprintf,1
+vuln04_strcat,1
+vuln05_memcpy,1
+vuln06_scanf,1
+vuln07_strcpy2,1
+vuln08_sprintf2,1
+safe01_fgets,0
+safe02_strncpy,0
+safe03_snprintf,0
+safe04_scanfw,0
+safe05_memcpy,0

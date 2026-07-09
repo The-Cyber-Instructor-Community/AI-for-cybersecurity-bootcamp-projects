@@ -1,0 +1,18 @@
+# Ignore writeup
+WRITEUP.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
