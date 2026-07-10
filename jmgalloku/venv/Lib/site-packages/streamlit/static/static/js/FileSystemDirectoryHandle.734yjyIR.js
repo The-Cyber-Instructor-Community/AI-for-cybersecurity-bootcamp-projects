@@ -1,0 +1,1 @@
+import{FileSystemDirectoryHandle as e}from"./es6.D2BY6jI1.js";export{e as FileSystemDirectoryHandle,e as default};

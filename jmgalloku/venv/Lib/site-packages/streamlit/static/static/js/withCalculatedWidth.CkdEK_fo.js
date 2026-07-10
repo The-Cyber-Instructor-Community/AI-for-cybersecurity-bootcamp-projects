@@ -1,0 +1,1 @@
+import{Ja as e,Xa as t,io as n,on as r,tn as i}from"./index.dkY5s53S.js";var a=n(t(),1),o=t=>{let n=n=>{let{width:a,elementRef:o}=i();return e(r,{ref:o,children:e(t,{...n,width:a})})};return n.displayName=`withCalculatedWidth(${t.displayName||t.name})`,(0,a.default)(n,t)};export{o as t};

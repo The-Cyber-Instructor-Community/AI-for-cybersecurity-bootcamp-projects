@@ -1,0 +1,7 @@
+import{Ja as e,Qa as t,Wa as n,io as r,ur as i,vr as a}from"./index.dkY5s53S.js";import{n as o,t as s}from"./Particles.6Y1M9UNq.js";var c=r(t(),1),l=``+new URL(`../media/flake-0.DgWaVvm5.png`,import.meta.url).href,u=``+new URL(`../media/flake-1.B2r5AHMK.png`,import.meta.url).href,d=``+new URL(`../media/flake-2.BnWSExPC.png`,import.meta.url).href,f=150,p=150,m=10,h=90,g=4e3,_=(e,t=0)=>Math.random()*(e-t)+t,v=()=>n(`from{transform:translateY(0)
+      rotateX(`,_(360),`deg)
+      rotateY(`,_(360),`deg)
+      rotateZ(`,_(360),`deg);}to{transform:translateY(calc(100vh + `,f,`px))
+      rotateX(0)
+      rotateY(0)
+      rotateZ(0);}`),y=a(`img`,{target:`e1usw70z0`})(({theme:e})=>({position:`fixed`,top:`${-f}px`,marginLeft:`${-p/2}px`,zIndex:e.zIndices.balloons,left:`${_(h,m)}vw`,animationDelay:`${_(g)}ms`,height:`${f}px`,width:`${p}px`,pointerEvents:`none`,animationDuration:`3000ms`,animationName:v(),animationTimingFunction:`ease-in`,animationDirection:`normal`,animationIterationCount:1,opacity:1})),b=100,x=[l,u,d],S=x.length,C=(0,c.memo)(({particleType:t,resourceCrossOriginMode:n})=>{let r=x[t];return e(y,{src:r,crossOrigin:i(n,r)})}),w=(0,c.memo)(function({scriptRunId:t}){return e(o,{children:e(s,{className:`stSnow`,"data-testid":`stSnow`,scriptRunId:t,numParticleTypes:S,numParticles:100,ParticleComponent:C})})});export{b as NUM_FLAKES,w as default};
