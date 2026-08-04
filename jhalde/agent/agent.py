@@ -13,6 +13,7 @@ Run:
 
 import sys
 import argparse
+import ipaddress
 import json
 import re
 from datetime import datetime
@@ -29,7 +30,8 @@ from rich.text import Text
 
 import config
 from agent.tools import TOOL_DEFINITIONS, execute_tool
-from agent.report import save_report
+from agent.kali_client import call_kali_tool, check_kali_reachable
+from agent.report import save_report, save_cidr_summary
 from agent.remediation import enhance_report
 from agent.html_report import save_html_report
 
@@ -310,11 +312,102 @@ def run_agent(target: str, ports: str = "1-1000") -> str:
     return final_report
 
 
+def _discover_live_hosts(cidr: str) -> list[str]:
+    """
+    Ping-sweep a CIDR range and return a list of live host IPs.
+    Uses Kali's nmap -sn via the MCP server; falls back to all IPs in the
+    range (capped at 254) if Kali is unreachable or returns nothing.
+    """
+    console.print(f"\n[bold cyan][*] Discovering live hosts in {cidr}...[/]")
+
+    if check_kali_reachable():
+        result = call_kali_tool("recon", "nmap", ["-sn", cidr], timeout=60)
+        stdout = result.get("stdout", "")
+        hosts = re.findall(
+            r'Nmap scan report for (?:\S+ \()?(\d+\.\d+\.\d+\.\d+)\)?', stdout
+        )
+        if hosts:
+            console.print(f"  [green]Found {len(hosts)} live host(s): {', '.join(hosts)}[/]")
+            return hosts
+        console.print("  [yellow]Kali ping-sweep returned no hosts — falling back[/]")
+    else:
+        console.print("  [yellow]Kali unreachable — falling back to full range scan[/]")
+
+    # Fallback: enumerate all host addresses in the network (skip network/broadcast)
+    net = ipaddress.ip_network(cidr, strict=False)
+    hosts = [str(h) for h in net.hosts()]
+    if len(hosts) > 254:
+        console.print(f"  [yellow]Range has {len(hosts)} hosts — capping at 254 for safety[/]")
+        hosts = hosts[:254]
+    console.print(f"  [yellow]Will attempt all {len(hosts)} host(s) without ping-sweep filter[/]")
+    return hosts
+
+
+def run_cidr_scan(cidr: str, ports: str = "1-1000") -> None:
+    """
+    Discover live hosts in a CIDR range and run the full pentest agent against each.
+    Saves individual reports per host and a combined summary report.
+    """
+    console.print(Panel.fit(
+        f"[bold cyan]AutoRedTeam — CIDR Scan[/]\n"
+        f"Range: [yellow]{cidr}[/]  |  Ports: [yellow]{ports}[/]\n"
+        f"Started: [dim]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}[/]",
+        border_style="cyan"
+    ))
+
+    live_hosts = _discover_live_hosts(cidr)
+    if not live_hosts:
+        console.print("[red]No live hosts found. Aborting.[/]")
+        return
+
+    results: list[dict] = []   # {host, report, path, html_path}
+
+    for i, host in enumerate(live_hosts, 1):
+        console.print(f"\n[bold magenta]━━━ Host {i}/{len(live_hosts)}: {host} ━━━[/]")
+        try:
+            report = run_agent(host, ports)
+            if report:
+                path      = save_report(host, report)
+                report    = enhance_report(report, path)
+                html_path = save_html_report(report, host, path)
+                console.print(Panel.fit(
+                    f"[green]Host {host} done[/]\n"
+                    f"  Markdown: [cyan]{path}[/]\n"
+                    f"  HTML:     [cyan]{html_path}[/]",
+                    border_style="green"
+                ))
+                results.append({"host": host, "report": report,
+                                 "path": path, "html_path": html_path})
+            else:
+                console.print(f"[yellow]No report generated for {host}[/]")
+                results.append({"host": host, "report": "", "path": None, "html_path": None})
+        except Exception as e:
+            console.print(f"[red]Error scanning {host}: {e}[/]")
+            results.append({"host": host, "report": "", "path": None, "html_path": None, "error": str(e)})
+
+    summary_path = save_cidr_summary(cidr, results)
+    console.print(Panel.fit(
+        f"[bold green]CIDR scan complete — {len(live_hosts)} host(s) scanned[/]\n"
+        f"Summary: [cyan]{summary_path}[/]",
+        border_style="green"
+    ))
+
+
 def main():
     parser = argparse.ArgumentParser(description="AutoRedTeam — AI Pentest Agent")
-    parser.add_argument("target", help="Target IP address (e.g. 192.168.56.101)")
+    parser.add_argument("target",
+                        help="Target IP, domain, URL, or CIDR range (e.g. 192.168.64.0/24)")
     parser.add_argument("--ports", default="1-1000", help="Port range (default: 1-1000)")
     args = parser.parse_args()
+
+    # Route CIDR ranges to multi-host scan
+    if "/" in args.target:
+        try:
+            ipaddress.ip_network(args.target, strict=False)
+            run_cidr_scan(args.target, args.ports)
+            return
+        except ValueError:
+            pass  # Not a valid CIDR — fall through to single-target scan
 
     report = run_agent(args.target, args.ports)
 

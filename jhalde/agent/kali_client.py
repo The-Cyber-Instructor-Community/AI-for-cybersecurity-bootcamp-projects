@@ -10,6 +10,7 @@ Falls back gracefully when Kali is unreachable.
 """
 
 import json
+import os
 import socket
 import urllib.parse
 from typing import Optional
