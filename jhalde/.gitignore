@@ -33,3 +33,8 @@ nikto_*.txt
 # All pentest reports — never commit target data publicly
 # Keep a sanitised sample report committed separately if needed for docs
 reports/
+
+# Blog post, slides, and generated images (kept locally, not published to git)
+BLOG_POST.md
+autoredteam_slides.html
+images/
