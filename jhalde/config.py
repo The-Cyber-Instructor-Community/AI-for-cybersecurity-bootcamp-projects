@@ -48,4 +48,5 @@ TOP_K_RESULTS = 5   # how many chunks to return per query
 # Set KALI_MCP_URL in .env once Kali VM is running.
 # The Kali MCP server exposes all Kali tools over the network.
 # Default IP assumes Kali is the third VM on the UTM host-only network.
-KALI_MCP_URL = os.getenv("KALI_MCP_URL", "http://192.168.128.3:8765")
+KALI_MCP_URL   = os.getenv("KALI_MCP_URL",   "http://192.168.128.3:8765")
+MCP_API_TOKEN  = os.getenv("MCP_API_TOKEN",  "")  # Bearer token for Kali MCP auth

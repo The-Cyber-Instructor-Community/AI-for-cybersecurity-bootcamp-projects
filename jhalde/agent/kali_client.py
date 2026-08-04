@@ -45,6 +45,12 @@ def check_kali_reachable(timeout: float = 3.0) -> bool:
     return _reachable
 
 
+def _auth_headers() -> dict:
+    """Return Authorization header if MCP_API_TOKEN is set."""
+    token = os.environ.get("MCP_API_TOKEN", "")
+    return {"Authorization": f"Bearer {token}"} if token else {}
+
+
 def call_kali_tool(tool_category: str, tool: str, args: list,
                    timeout: int = 180) -> dict:
     """
@@ -71,6 +77,7 @@ def call_kali_tool(tool_category: str, tool: str, args: list,
         r = httpx.post(
             f"{base}/call",
             json=payload,
+            headers=_auth_headers(),
             timeout=timeout + 15,
         )
         r.raise_for_status()

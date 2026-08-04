@@ -29,6 +29,24 @@ for t in $TOOLS; do
 done
 
 echo ""
+echo "[*] Installing Nuclei..."
+if command -v nuclei &>/dev/null; then
+    echo "  [+] nuclei already installed: $(nuclei -version 2>&1 | head -1)"
+else
+    # Kali repos include nuclei — try apt first, fall back to Go install
+    sudo apt install -y nuclei 2>/dev/null || {
+        echo "  [!] apt install failed — installing via Go..."
+        sudo apt install -y golang-go 2>/dev/null
+        go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+        echo "  [+] nuclei installed via Go (binary at ~/go/bin/nuclei)"
+        echo "      Add to PATH: export PATH=\$PATH:\$HOME/go/bin"
+    }
+fi
+
+echo "[*] Updating Nuclei templates..."
+nuclei -update-templates -silent 2>/dev/null && echo "  [+] Templates updated" || echo "  [!] Template update failed (run manually: nuclei -update-templates)"
+
+echo ""
 echo "[+] Setup complete."
 echo "[*] Start the server with:"
-echo "    source venv/bin/activate && python3 server.py"
+echo "    source venv/bin/activate && MCP_API_TOKEN=<your-token> python3 server.py"

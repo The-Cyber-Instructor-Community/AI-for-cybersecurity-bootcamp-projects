@@ -3,7 +3,7 @@ agent/agent.py
 ──────────────
 AutoRedTeam Agent — autonomous pentest orchestrator.
 
-The agent uses Claude claude-sonnet-4-6 with tool use to drive a full pentest
+The agent uses Claude Haiku with tool use to drive a full pentest
 workflow: discover → enumerate → match CVEs → analyse → report.
 
 Run:
@@ -14,6 +14,7 @@ Run:
 import sys
 import argparse
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -34,6 +35,40 @@ from agent.html_report import save_html_report
 
 console = Console()
 
+# ── Prompt injection patterns to detect in tool outputs ──────────
+_INJECTION_PATTERNS = re.compile(
+    r'ignore\s+(all\s+)?(previous|prior|above)\s+instructions?'
+    r'|you\s+are\s+now\s+(a\s+)?'
+    r'|new\s+instructions?:'
+    r'|system\s*prompt'
+    r'|disregard\s+(the\s+)?(above|previous|prior)'
+    r'|act\s+as\s+if'
+    r'|override\s+(previous\s+)?instructions?',
+    re.IGNORECASE | re.DOTALL,
+)
+
+_HTML_COMMENTS = re.compile(r'<!--.*?-->', re.DOTALL)
+
+MAX_TOOL_OUTPUT = 6000  # chars — caps context growth per tool call
+
+
+def sanitize_tool_output(raw: str) -> str:
+    """
+    Strip content from tool outputs that could carry prompt injection payloads
+    before they enter the LLM context. Applied to every tool result.
+    """
+    # Strip HTML/XML comments — common injection carrier in web responses
+    cleaned = _HTML_COMMENTS.sub('[HTML_COMMENT_REMOVED]', raw)
+    # Truncate oversized outputs
+    if len(cleaned) > MAX_TOOL_OUTPUT:
+        cleaned = cleaned[:MAX_TOOL_OUTPUT] + f"\n[OUTPUT_TRUNCATED — {len(raw)} total chars]"
+    # Flag suspicious instruction patterns
+    if _INJECTION_PATTERNS.search(cleaned):
+        console.print("[bold red][!] Potential prompt injection detected in tool output — flagged[/]")
+        cleaned = f"[POTENTIAL_INJECTION_DETECTED]\n{cleaned}"
+    return cleaned
+
+
 SYSTEM_PROMPT = """\
 You are AutoRedTeam, an expert autonomous penetration testing agent.
 
@@ -51,8 +86,11 @@ Follow this workflow strictly:
 4. Scan ports and services:
    - PREFER kali_recon(tool='nmap', ...) if Kali is reachable — richer options
    - FALLBACK to nmap_scan if Kali is unreachable
-5. If web port found (80, 443, 8080) → kali_web_scan(tool='nikto') + kali_web_scan(tool='gobuster')
-   or fallback nikto_scan + gobuster_scan
+5. If web port found (80, 443, 8080):
+   a. kali_web_scan(tool='nikto') + kali_web_scan(tool='gobuster')  [or fallback nikto_scan + gobuster_scan]
+   b. kali_nuclei_scan(target='http(s)://<ip_or_domain>') — ALWAYS run this after nikto/gobuster.
+      Nuclei covers 9000+ templates (CVEs, exposed panels, misconfigs, default credentials) that nikto misses.
+      Use templates='cves,misconfigurations,exposed-panels,exposures,default-logins' for thorough coverage.
 6. If port 139/445 open → kali_recon(tool='enum4linux-ng') or enum4linux_scan
 
 ### PHASE 3 — VULNERABILITY INTELLIGENCE
@@ -85,6 +123,7 @@ TOOL NOTES:
 - searchsploit_lookup: "vsftpd 2.3.4", "samba 3.0.20", etc.
 - analyze_cve_with_model: cite model_source in the finding (fine-tuned-llama or claude-haiku-fallback)
 - enum4linux_scan: null session = CRITICAL; writable shares = CRITICAL; 35+ users = password spray risk
+- kali_nuclei_scan: prefix IP targets with http:// or https://. Output is one finding per line (template-id, severity, matched-at). Each line in stdout is a confirmed vulnerability — include ALL nuclei findings in the report. If nuclei finds nothing, report "No nuclei findings" — do not skip the tool.
 
 IMPORTANT RULES:
 - NEVER suggest executing exploits — suggest and explain only
@@ -202,7 +241,7 @@ def run_agent(target: str, ports: str = "1-1000") -> str:
                     transient=True,
                 ):
                     response = client.messages.create(
-                        model      = "claude-sonnet-4-6",
+                        model      = "claude-haiku-4-5-20251001",
                         max_tokens = 8096,
                         system     = SYSTEM_PROMPT,
                         tools      = TOOL_DEFINITIONS,
@@ -238,6 +277,8 @@ def run_agent(target: str, ports: str = "1-1000") -> str:
                     transient=True,
                 ):
                     result = execute_tool(block.name, block.input)
+
+                result = sanitize_tool_output(result)
 
                 # Show a brief preview of the result
                 preview = result[:200].replace("\n", " ")

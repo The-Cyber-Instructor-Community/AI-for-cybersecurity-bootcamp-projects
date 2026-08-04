@@ -25,10 +25,11 @@ venv/
 models/
 *.safetensors
 *.bin
+*.zip
 
 # Nikto output files
 nikto_*.txt
 
-# Reports for targets outside the lab (not for public commit)
-reports/report_villatortuga*
-reports/report_www_villatortuga*
+# All pentest reports — never commit target data publicly
+# Keep a sanitised sample report committed separately if needed for docs
+reports/

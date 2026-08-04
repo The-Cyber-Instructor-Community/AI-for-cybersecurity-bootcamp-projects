@@ -344,6 +344,44 @@ TOOL_DEFINITIONS = [
             "required": ["tool", "args"],
         },
     },
+    {
+        "name": "kali_nuclei_scan",
+        "description": (
+            "Run Nuclei template-based vulnerability scanner against a target URL or IP. "
+            "Nuclei has 9000+ community templates covering CVEs, misconfigurations, exposed admin panels, "
+            "sensitive file exposures, SSL issues, and default credentials. "
+            "ALWAYS call this after nikto/gobuster when a web port is found — it catches CVE-matched "
+            "vulnerabilities and exposed panels that nikto misses. "
+            "Also useful against non-web targets (network, ssl templates). "
+            "Examples: target='http://192.168.64.8', target='https://example.com'"
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "target": {
+                    "type": "string",
+                    "description": "Target URL or IP (e.g. 'http://192.168.64.8' or 'https://example.com')",
+                },
+                "templates": {
+                    "type": "string",
+                    "description": (
+                        "Comma-separated template categories. "
+                        "Default: 'cves,misconfigurations,exposed-panels,exposures'. "
+                        "Others: 'network,ssl,dns,fuzzing,takeovers,default-logins,technologies'"
+                    ),
+                },
+                "severity": {
+                    "type": "string",
+                    "description": "Comma-separated severity levels. Default: 'critical,high,medium'",
+                },
+                "rate_limit": {
+                    "type": "integer",
+                    "description": "Max requests per second (default: 100). Lower for fragile targets.",
+                },
+            },
+            "required": ["target"],
+        },
+    },
     # ── Intelligence ──────────────────────────────────────────
     {
         "name": "analyze_cve_with_model",
@@ -525,6 +563,28 @@ def execute_tool(name: str, inputs: dict) -> str:
             args=inputs.get("args", []),
             timeout=inputs.get("timeout", 180),
         )
+        return json.dumps(result, indent=2)
+
+    elif name == "kali_nuclei_scan":
+        if not check_kali_reachable():
+            return json.dumps({
+                "error": "Kali MCP server unreachable — nuclei scan requires Kali VM.",
+                "kali_url": config.KALI_MCP_URL,
+            })
+        target     = inputs["target"]
+        templates  = inputs.get("templates", "cves,misconfigurations,exposed-panels,exposures")
+        severity   = inputs.get("severity",  "critical,high,medium")
+        rate_limit = inputs.get("rate_limit", 100)
+        args = [
+            "-u", target,
+            "-t", templates,
+            "-severity", severity,
+            "-rl", str(rate_limit),
+            "-nc",       # no colour codes in output
+            "-silent",   # only print findings, not banner/progress
+            "-timeout", "10",
+        ]
+        result = call_kali_tool("web_scan", "nuclei", args, timeout=300)
         return json.dumps(result, indent=2)
 
     elif name == "analyze_cve_with_model":

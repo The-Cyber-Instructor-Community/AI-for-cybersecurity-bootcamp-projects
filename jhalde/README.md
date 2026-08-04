@@ -47,10 +47,6 @@ $ python3 -m agent.agent 127.0.0.1 --ports 2121,2222,8080,44500,33060,18180
 │         Decides next tool → calls it → analyses output    │
 └───────────────────────────────────────────────────────────┘
         │
-        │  ┌─────────────────────────────────────────────┐
-        │  │           5-Phase Workflow                   │
-        │  └─────────────────────────────────────────────┘
-        │
         ├──▶  PHASE 1: PASSIVE RECON
         │         whois → dns_recon → theHarvester
         │         (no packets sent to target)

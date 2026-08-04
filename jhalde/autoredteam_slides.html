@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoRedTeam — Capstone Presentation</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<style>
+  :root {
+    --primary: #6b9fca;
+    --green:   #5a9e78;
+    --purple:  #8b7ec8;
+    --amber:   #c29a5a;
+    --teal:    #4a9bbe;
+    --bg:      #111827;
+    --card:    #1f2937;
+    --border:  #374151;
+    --text:    #d1d5db;
+    --dim:     #9ca3af;
+  }
+  .reveal { font-family: 'Segoe UI', system-ui, sans-serif; }
+  .reveal-viewport { background: var(--bg) !important; }
+  .reveal h2 { color: var(--primary); font-size: 1.3em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; margin-bottom: 0.5em; }
+  .reveal section { padding: 24px 46px; }
+  .reveal p  { font-size: 0.7em; color: var(--text); }
+  .reveal ul { font-size: 0.66em; color: var(--text); line-height: 1.9; }
+  .reveal ul li::marker { color: var(--primary); }
+
+  .badge { display:inline-block; background:var(--card); border:1px solid var(--border); border-radius:20px; padding:4px 14px; font-size:0.56em; color:var(--text); margin:4px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .card  { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; font-size:0.58em; color:var(--text); text-align:left; }
+  .card .icon  { font-size:1.5em; display:block; margin-bottom:6px; }
+  .card .label { font-size:1.1em; font-weight:bold; color:#e5e7eb; margin-bottom:5px; }
+  .card ul { margin:0; padding-left:14px; line-height:1.8; color:var(--dim); }
+
+  .stats { display:flex; justify-content:center; gap:30px; margin:0.8em 0; }
+  .stat .num { font-size:2em; font-weight:900; color:var(--primary); }
+  .stat .lbl { font-size:0.5em; color:var(--dim); margin-top:-4px; }
+  .stat { text-align:center; }
+
+  .tag { display:inline-block; background:var(--card); border:1px solid var(--border); border-radius:4px; padding:2px 9px; font-size:0.52em; color:var(--dim); margin:2px; }
+  .t-b { border-color:var(--primary); color:var(--primary); background:#1e304520; }
+  .t-g { border-color:var(--green);   color:var(--green);   background:#1a3a3020; }
+  .t-p { border-color:var(--purple);  color:var(--purple);  background:#2a263a20; }
+  .t-a { border-color:var(--amber);   color:var(--amber);   background:#3a2e1a20; }
+
+  .code { background:#161d2b; border:1px solid var(--border); border-radius:8px; padding:12px 18px; font-family:'Courier New',monospace; font-size:0.5em; text-align:left; line-height:1.9; margin-top:0.6em; }
+  .code .p { color:var(--green); } .code .o { color:var(--text); } .code .h { color:var(--primary); font-weight:bold; }
+
+  .center { text-align:center; }
+  .c-primary { color:var(--primary); } .c-green { color:var(--green); } .c-purple { color:var(--purple); } .c-amber { color:var(--amber); }
+
+  /* ── Phase rows ── */
+  .phase { border-left:3px solid; border-radius:5px; padding:7px 13px; margin:4px 0; font-size:0.56em; text-align:left; }
+  .phase strong { display:block; margin-bottom:2px; font-size:1.05em; }
+  .ph1 { border-color:var(--teal);    background:#1a3a5220; color:#c8e4f0; }
+  .ph2 { border-color:var(--green);   background:#1a3a3020; color:#c4dfd0; }
+  .ph3 { border-color:var(--purple);  background:#2a263a20; color:#d4cef0; }
+  .ph4 { border-color:var(--amber);   background:#3a2e1a20; color:#e0d4b8; }
+  .ph5 { border-color:var(--primary); background:#1e2e4020; color:#c8d8ec; }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- ═══ 1 TITLE ═══ -->
+<section class="center">
+  <p style="color:var(--primary);font-size:0.58em;letter-spacing:3px;text-transform:uppercase;margin-bottom:0.5em;">AI Cybersecurity Capstone</p>
+  <h1 style="font-size:1.6em;color:var(--primary);text-shadow:0 0 28px #6b9fca30;margin-bottom:0.1em;">AutoRedTeam</h1>
+  <p style="font-size:0.8em;color:var(--text);margin-bottom:1em;">AI-Powered Autonomous Penetration Testing Agent</p>
+
+  <!-- Mini architecture visual -->
+  <svg viewBox="0 0 700 90" style="width:80%;margin:0.6em auto;display:block;">
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0,8 3,0 6" fill="#6b9fca" opacity="0.7"/>
+      </marker>
+    </defs>
+    <!-- boxes -->
+    <rect x="10"  y="25" width="110" height="40" rx="8" fill="#1f2937" stroke="#6b9fca" stroke-width="1.2"/>
+    <rect x="155" y="25" width="110" height="40" rx="8" fill="#1f2937" stroke="#8b7ec8" stroke-width="1.2"/>
+    <rect x="300" y="25" width="110" height="40" rx="8" fill="#1f2937" stroke="#5a9e78" stroke-width="1.2"/>
+    <rect x="445" y="25" width="110" height="40" rx="8" fill="#1f2937" stroke="#c29a5a" stroke-width="1.2"/>
+    <rect x="590" y="25" width="100" height="40" rx="8" fill="#1f2937" stroke="#4a9bbe" stroke-width="1.2"/>
+    <!-- labels -->
+    <text x="65"  y="41" text-anchor="middle" fill="#6b9fca" font-size="9" font-family="sans-serif">🎯 Target</text>
+    <text x="65"  y="56" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">192.168.64.8</text>
+    <text x="210" y="41" text-anchor="middle" fill="#8b7ec8" font-size="9" font-family="sans-serif">⚡ Agent</text>
+    <text x="210" y="56" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">Claude Haiku</text>
+    <text x="355" y="41" text-anchor="middle" fill="#5a9e78" font-size="9" font-family="sans-serif">🧠 RAG + LLM</text>
+    <text x="355" y="56" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">ChromaDB + Llama</text>
+    <text x="500" y="41" text-anchor="middle" fill="#c29a5a" font-size="9" font-family="sans-serif">🐉 Kali MCP</text>
+    <text x="500" y="56" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">192.168.64.7</text>
+    <text x="640" y="41" text-anchor="middle" fill="#4a9bbe" font-size="9" font-family="sans-serif">📋 Report</text>
+    <text x="640" y="56" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">MD + HTML</text>
+    <!-- arrows -->
+    <line x1="120" y1="45" x2="152" y2="45" stroke="#6b9fca" stroke-width="1.2" marker-end="url(#arr)" opacity="0.7"/>
+    <line x1="265" y1="45" x2="297" y2="45" stroke="#8b7ec8" stroke-width="1.2" marker-end="url(#arr)" opacity="0.7"/>
+    <line x1="410" y1="45" x2="442" y2="45" stroke="#5a9e78" stroke-width="1.2" marker-end="url(#arr)" opacity="0.7"/>
+    <line x1="555" y1="45" x2="587" y2="45" stroke="#c29a5a" stroke-width="1.2" marker-end="url(#arr)" opacity="0.7"/>
+  </svg>
+
+  <div style="margin:0.8em 0;">
+    <span class="badge">🤖 Claude Haiku</span>
+    <span class="badge">🧠 RAG + Fine-tuning</span>
+    <span class="badge">🔌 MCP Server</span>
+    <span class="badge">🐉 Kali Linux</span>
+    <span class="badge">🎯 Metasploitable2</span>
+  </div>
+  <p style="font-size:0.58em;color:var(--dim);border-top:1px solid var(--border);padding-top:0.7em;margin-top:0.9em;">Jagdish Halde &nbsp;·&nbsp; AI for Cybersecurity Bootcamp &nbsp;·&nbsp; 2026</p>
+</section>
+
+<!-- ═══ 2 PROBLEM & SOLUTION ═══ -->
+<section>
+  <h2>Problem &amp; Solution</h2>
+  <div class="grid2">
+    <div class="card">
+      <span class="icon">😓</span>
+      <div class="label">Manual Pentesting is Slow</div>
+      <ul>
+        <li>Recon → scan → exploit → report takes days</li>
+        <li>Repetitive tool chaining is error-prone</li>
+        <li>Attackers automate — defenders lag behind</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--primary);">
+      <span class="icon">⚡</span>
+      <div class="label c-primary">AutoRedTeam</div>
+      <ul>
+        <li>Autonomous 5-phase pentest workflow</li>
+        <li>19 tools · 2000+ CVEs · 697 ATT&amp;CK TTPs</li>
+        <li>Generates a full report in one command</li>
+      </ul>
+    </div>
+  </div>
+  <div class="stats" style="margin-top:1.1em;">
+    <div class="stat"><div class="num">19</div><div class="lbl">Tools</div></div>
+    <div class="stat"><div class="num">2000+</div><div class="lbl">CVEs in RAG</div></div>
+    <div class="stat"><div class="num">697</div><div class="lbl">ATT&amp;CK TTPs</div></div>
+    <div class="stat"><div class="num">36+</div><div class="lbl">Tool calls/run</div></div>
+  </div>
+</section>
+
+<!-- ═══ 3 PROJECT FLOW DIAGRAM ═══ -->
+<section>
+  <h2>Project Flow</h2>
+  <svg viewBox="0 0 780 390" style="width:100%;margin-top:0.3em;">
+    <defs>
+      <marker id="a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#6b9fca"/></marker>
+      <marker id="ag" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#5a9e78"/></marker>
+      <marker id="ap" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#8b7ec8"/></marker>
+      <marker id="aa" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#c29a5a"/></marker>
+    </defs>
+
+    <!-- Target node -->
+    <rect x="320" y="8" width="140" height="36" rx="18" fill="#1f2937" stroke="#6b9fca" stroke-width="1.5"/>
+    <text x="390" y="21" text-anchor="middle" fill="#6b9fca" font-size="10" font-family="sans-serif" font-weight="bold">🎯 TARGET IP + PORTS</text>
+    <text x="390" y="36" text-anchor="middle" fill="#9ca3af" font-size="9" font-family="sans-serif">192.168.64.8</text>
+
+    <!-- Arrow down -->
+    <line x1="390" y1="44" x2="390" y2="62" stroke="#6b9fca" stroke-width="1.5" marker-end="url(#a)"/>
+
+    <!-- Orchestrator -->
+    <rect x="255" y="63" width="270" height="40" rx="8" fill="#1e2e40" stroke="#6b9fca" stroke-width="1.5"/>
+    <text x="390" y="79" text-anchor="middle" fill="#6b9fca" font-size="10" font-family="sans-serif" font-weight="bold">⚡ Claude Haiku — Orchestrator</text>
+    <text x="390" y="95" text-anchor="middle" fill="#9ca3af" font-size="8.5" font-family="sans-serif">Decides next tool → calls it → analyses output</text>
+
+    <!-- 5 phase boxes -->
+    <!-- Phase 1 -->
+    <line x1="390" y1="103" x2="390" y2="118" stroke="#6b9fca" stroke-width="1.2"/>
+    <line x1="100" y1="118" x2="680" y2="118" stroke="#374151" stroke-width="1"/>
+    <line x1="100" y1="118" x2="100" y2="133" stroke="#4a9bbe" stroke-width="1.2" marker-end="url(#a)"/>
+    <rect x="30" y="134" width="140" height="52" rx="7" fill="#1a3a5225" stroke="#4a9bbe" stroke-width="1.2"/>
+    <text x="100" y="150" text-anchor="middle" fill="#4a9bbe" font-size="9" font-family="sans-serif" font-weight="bold">🔍 PHASE 1</text>
+    <text x="100" y="163" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">PASSIVE RECON</text>
+    <text x="100" y="176" text-anchor="middle" fill="#c8e4f0" font-size="7.5" font-family="sans-serif">whois · dns_recon</text>
+    <text x="100" y="187" text-anchor="middle" fill="#c8e4f0" font-size="7.5" font-family="sans-serif">theHarvester</text>
+
+    <!-- Phase 2 -->
+    <line x1="260" y1="118" x2="260" y2="133" stroke="#5a9e78" stroke-width="1.2" marker-end="url(#ag)"/>
+    <rect x="185" y="134" width="150" height="52" rx="7" fill="#1a3a3025" stroke="#5a9e78" stroke-width="1.2"/>
+    <text x="260" y="150" text-anchor="middle" fill="#5a9e78" font-size="9" font-family="sans-serif" font-weight="bold">📡 PHASE 2</text>
+    <text x="260" y="163" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">ACTIVE SCAN</text>
+    <text x="260" y="176" text-anchor="middle" fill="#c4dfd0" font-size="7.5" font-family="sans-serif">nmap · nikto · gobuster</text>
+    <text x="260" y="187" text-anchor="middle" fill="#c4dfd0" font-size="7.5" font-family="sans-serif">enum4linux</text>
+
+    <!-- Phase 3 -->
+    <line x1="390" y1="118" x2="390" y2="133" stroke="#8b7ec8" stroke-width="1.2" marker-end="url(#ap)"/>
+    <rect x="325" y="134" width="130" height="52" rx="7" fill="#2a263a25" stroke="#8b7ec8" stroke-width="1.2"/>
+    <text x="390" y="150" text-anchor="middle" fill="#8b7ec8" font-size="9" font-family="sans-serif" font-weight="bold">🧠 PHASE 3</text>
+    <text x="390" y="163" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">INTELLIGENCE</text>
+    <text x="390" y="176" text-anchor="middle" fill="#d4cef0" font-size="7.5" font-family="sans-serif">CVE RAG · Llama 3.1 8B</text>
+    <text x="390" y="187" text-anchor="middle" fill="#d4cef0" font-size="7.5" font-family="sans-serif">ATT&amp;CK mapping</text>
+
+    <!-- Phase 4 -->
+    <line x1="530" y1="118" x2="530" y2="133" stroke="#c29a5a" stroke-width="1.2" marker-end="url(#aa)"/>
+    <rect x="460" y="134" width="140" height="52" rx="7" fill="#3a2e1a25" stroke="#c29a5a" stroke-width="1.2"/>
+    <text x="530" y="150" text-anchor="middle" fill="#c29a5a" font-size="9" font-family="sans-serif" font-weight="bold">⚔️ PHASE 4</text>
+    <text x="530" y="163" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">EXPLOITATION</text>
+    <text x="530" y="176" text-anchor="middle" fill="#e0d4b8" font-size="7.5" font-family="sans-serif">Metasploit RPC</text>
+    <text x="530" y="187" text-anchor="middle" fill="#e0d4b8" font-size="7.5" font-family="sans-serif">suggest only ⚠️</text>
+
+    <!-- Phase 5 -->
+    <line x1="680" y1="118" x2="680" y2="133" stroke="#6b9fca" stroke-width="1.2" marker-end="url(#a)"/>
+    <rect x="610" y="134" width="140" height="52" rx="7" fill="#1e2e4025" stroke="#6b9fca" stroke-width="1.2"/>
+    <text x="680" y="150" text-anchor="middle" fill="#6b9fca" font-size="9" font-family="sans-serif" font-weight="bold">📋 PHASE 5</text>
+    <text x="680" y="163" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">REPORT</text>
+    <text x="680" y="176" text-anchor="middle" fill="#c8d8ec" font-size="7.5" font-family="sans-serif">Markdown + HTML</text>
+    <text x="680" y="187" text-anchor="middle" fill="#c8d8ec" font-size="7.5" font-family="sans-serif">Remediation playbook</text>
+
+    <!-- Supporting components row -->
+    <text x="390" y="215" text-anchor="middle" fill="#374151" font-size="9" font-family="sans-serif">━━━━━━━━━━━━━━━ Supporting Components ━━━━━━━━━━━━━━━</text>
+
+    <!-- ChromaDB -->
+    <rect x="30" y="228" width="140" height="50" rx="7" fill="#1f2937" stroke="#8b7ec8" stroke-width="1"/>
+    <text x="100" y="248" text-anchor="middle" fill="#8b7ec8" font-size="9" font-family="sans-serif" font-weight="bold">📚 ChromaDB RAG</text>
+    <text x="100" y="261" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">2000+ CVEs (NVD)</text>
+    <text x="100" y="272" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">697 ATT&amp;CK TTPs</text>
+    <line x1="260" y1="186" x2="100" y2="227" stroke="#8b7ec8" stroke-width="1" stroke-dasharray="4,3" opacity="0.5" marker-end="url(#ap)"/>
+
+    <!-- Llama -->
+    <rect x="200" y="228" width="140" height="50" rx="7" fill="#1f2937" stroke="#c29a5a" stroke-width="1"/>
+    <text x="270" y="248" text-anchor="middle" fill="#c29a5a" font-size="9" font-family="sans-serif" font-weight="bold">🦙 Llama 3.1 8B</text>
+    <text x="270" y="261" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">QLoRA fine-tuned</text>
+    <text x="270" y="272" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">500 CVE pairs</text>
+    <line x1="390" y1="186" x2="270" y2="227" stroke="#c29a5a" stroke-width="1" stroke-dasharray="4,3" opacity="0.5" marker-end="url(#aa)"/>
+
+    <!-- Kali MCP -->
+    <rect x="370" y="228" width="160" height="50" rx="7" fill="#1f2937" stroke="#5a9e78" stroke-width="1"/>
+    <text x="450" y="248" text-anchor="middle" fill="#5a9e78" font-size="9" font-family="sans-serif" font-weight="bold">🐉 Kali MCP Server</text>
+    <text x="450" y="261" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">192.168.64.7:8765</text>
+    <text x="450" y="272" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">hydra · sqlmap · masscan</text>
+    <line x1="530" y1="186" x2="450" y2="227" stroke="#5a9e78" stroke-width="1" stroke-dasharray="4,3" opacity="0.5" marker-end="url(#ag)"/>
+
+    <!-- Metasploitable2 -->
+    <rect x="555" y="228" width="160" height="50" rx="7" fill="#1f2937" stroke="#6b9fca" stroke-width="1"/>
+    <text x="635" y="248" text-anchor="middle" fill="#6b9fca" font-size="9" font-family="sans-serif" font-weight="bold">🎯 Metasploitable2</text>
+    <text x="635" y="261" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">192.168.64.8</text>
+    <text x="635" y="272" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">30+ vulnerable services</text>
+    <line x1="680" y1="186" x2="635" y2="227" stroke="#6b9fca" stroke-width="1" stroke-dasharray="4,3" opacity="0.5" marker-end="url(#a)"/>
+
+    <!-- Lab network label -->
+    <rect x="30" y="295" width="685" height="26" rx="5" fill="#1a3a5215" stroke="#374151" stroke-width="1"/>
+    <text x="373" y="313" text-anchor="middle" fill="#9ca3af" font-size="8.5" font-family="sans-serif">🖥️  macOS Host &nbsp;→&nbsp; UTM Shared Network (192.168.64.x) &nbsp;→&nbsp; Kali (64.7) &amp; Metasploitable2 (64.8) on same subnet</text>
+
+    <!-- Legend -->
+    <line x1="35"  y1="340" x2="65"  y2="340" stroke="#6b9fca" stroke-width="1.5"/>
+    <text x="70"  y="344" fill="#9ca3af" font-size="8" font-family="sans-serif">Main flow</text>
+    <line x1="130" y1="340" x2="160" y2="340" stroke="#8b7ec8" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="165" y="344" fill="#9ca3af" font-size="8" font-family="sans-serif">Supporting component</text>
+  </svg>
+</section>
+
+<!-- ═══ 4 LAB NETWORK TOPOLOGY ═══ -->
+<section>
+  <h2>Lab Network Topology</h2>
+  <svg viewBox="0 0 740 330" style="width:100%;margin-top:0.2em;">
+    <defs>
+      <marker id="b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#6b9fca"/></marker>
+      <marker id="bg" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#5a9e78"/></marker>
+      <marker id="br" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#c29a5a"/></marker>
+    </defs>
+
+    <!-- macOS Host box -->
+    <rect x="10" y="30" width="200" height="270" rx="10" fill="#1a2535" stroke="#6b9fca" stroke-width="1.5"/>
+    <text x="110" y="52" text-anchor="middle" fill="#6b9fca" font-size="11" font-family="sans-serif" font-weight="bold">🖥️ macOS Host</text>
+    <text x="110" y="67" text-anchor="middle" fill="#9ca3af" font-size="8.5" font-family="sans-serif">Apple Silicon (M-series)</text>
+
+    <!-- Agent box inside macOS -->
+    <rect x="25" y="78" width="170" height="55" rx="7" fill="#1f2937" stroke="#8b7ec8" stroke-width="1"/>
+    <text x="110" y="95" text-anchor="middle" fill="#8b7ec8" font-size="9" font-family="sans-serif" font-weight="bold">⚡ AutoRedTeam Agent</text>
+    <text x="110" y="108" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">Claude Haiku (Tool Use API)</text>
+    <text x="110" y="121" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">19 tools · 40 tool call limit</text>
+
+    <!-- ChromaDB inside macOS -->
+    <rect x="25" y="143" width="80" height="44" rx="6" fill="#1f2937" stroke="#8b7ec8" stroke-width="1"/>
+    <text x="65" y="160" text-anchor="middle" fill="#8b7ec8" font-size="8" font-family="sans-serif" font-weight="bold">📚 ChromaDB</text>
+    <text x="65" y="172" text-anchor="middle" fill="#9ca3af" font-size="7" font-family="sans-serif">2000+ CVEs</text>
+    <text x="65" y="182" text-anchor="middle" fill="#9ca3af" font-size="7" font-family="sans-serif">697 TTPs</text>
+
+    <!-- Llama inside macOS -->
+    <rect x="115" y="143" width="80" height="44" rx="6" fill="#1f2937" stroke="#c29a5a" stroke-width="1"/>
+    <text x="155" y="160" text-anchor="middle" fill="#c29a5a" font-size="8" font-family="sans-serif" font-weight="bold">🦙 Llama 3.1</text>
+    <text x="155" y="172" text-anchor="middle" fill="#9ca3af" font-size="7" font-family="sans-serif">Fine-tuned 8B</text>
+    <text x="155" y="182" text-anchor="middle" fill="#9ca3af" font-size="7" font-family="sans-serif">QLoRA</text>
+
+    <!-- Report inside macOS -->
+    <rect x="25" y="197" width="170" height="38" rx="6" fill="#1f2937" stroke="#4a9bbe" stroke-width="1"/>
+    <text x="110" y="213" text-anchor="middle" fill="#4a9bbe" font-size="8.5" font-family="sans-serif" font-weight="bold">📋 Report Generator</text>
+    <text x="110" y="227" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">Markdown + HTML + Remediation</text>
+
+    <!-- Anthropic API cloud -->
+    <rect x="25" y="245" width="170" height="38" rx="6" fill="#1f2937" stroke="#6b9fca" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="110" y="261" text-anchor="middle" fill="#6b9fca" font-size="8.5" font-family="sans-serif" font-weight="bold">☁️ Anthropic API</text>
+    <text x="110" y="275" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">Claude Haiku (remote)</text>
+
+    <!-- UTM Network box -->
+    <rect x="240" y="30" width="490" height="270" rx="10" fill="#1a2820" stroke="#5a9e78" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <text x="485" y="52" text-anchor="middle" fill="#5a9e78" font-size="10" font-family="sans-serif" font-weight="bold">🔌 UTM Shared Network — 192.168.64.0/24</text>
+
+    <!-- Kali box -->
+    <rect x="260" y="68" width="200" height="210" rx="9" fill="#1a2535" stroke="#c29a5a" stroke-width="1.5"/>
+    <text x="360" y="90" text-anchor="middle" fill="#c29a5a" font-size="10" font-family="sans-serif" font-weight="bold">🐉 Kali Linux</text>
+    <text x="360" y="104" text-anchor="middle" fill="#9ca3af" font-size="8.5" font-family="sans-serif">192.168.64.7  (ARM64)</text>
+    <rect x="275" y="115" width="170" height="40" rx="6" fill="#1f2937" stroke="#5a9e78" stroke-width="1"/>
+    <text x="360" y="131" text-anchor="middle" fill="#5a9e78" font-size="8.5" font-family="sans-serif" font-weight="bold">🔌 MCP Server :8765</text>
+    <text x="360" y="145" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">POST /call → any Kali tool</text>
+    <text x="360" y="175" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">hydra · john · hashcat</text>
+    <text x="360" y="188" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">sqlmap · ffuf · nikto</text>
+    <text x="360" y="201" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">masscan · enum4linux-ng</text>
+    <text x="360" y="214" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">msfconsole · msfvenom</text>
+    <text x="360" y="227" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">crackmapexec · smbmap</text>
+    <rect x="275" y="240" width="170" height="28" rx="5" fill="#212529" stroke="#c29a5a" stroke-width="0.8"/>
+    <text x="360" y="258" text-anchor="middle" fill="#c29a5a" font-size="7.5" font-family="sans-serif">Metasploit RPC → exploits target</text>
+
+    <!-- Metasploitable box -->
+    <rect x="490" y="68" width="215" height="210" rx="9" fill="#1f1a1a" stroke="#6b9fca" stroke-width="1.5"/>
+    <text x="597" y="90" text-anchor="middle" fill="#6b9fca" font-size="10" font-family="sans-serif" font-weight="bold">🎯 Metasploitable2</text>
+    <text x="597" y="104" text-anchor="middle" fill="#9ca3af" font-size="8.5" font-family="sans-serif">192.168.64.8  (x86_64)</text>
+    <!-- service list -->
+    <text x="507" y="125" fill="#c29a5a" font-size="8" font-family="sans-serif">CRITICAL</text>
+    <text x="565" y="125" fill="#d1d5db" font-size="7.5" font-family="sans-serif">vsftpd 2.3.4 backdoor :21</text>
+    <text x="507" y="140" fill="#c29a5a" font-size="8" font-family="sans-serif">CRITICAL</text>
+    <text x="565" y="140" fill="#d1d5db" font-size="7.5" font-family="sans-serif">Samba 3.0.20 RCE :445</text>
+    <text x="507" y="155" fill="#c29a5a" font-size="8" font-family="sans-serif">CRITICAL</text>
+    <text x="565" y="155" fill="#d1d5db" font-size="7.5" font-family="sans-serif">UnrealIRCd backdoor :6667</text>
+    <text x="507" y="170" fill="#c29a5a" font-size="8" font-family="sans-serif">CRITICAL</text>
+    <text x="565" y="170" fill="#d1d5db" font-size="7.5" font-family="sans-serif">distccd RCE :3632</text>
+    <text x="507" y="185" fill="#c29a5a" font-size="8" font-family="sans-serif">CRITICAL</text>
+    <text x="565" y="185" fill="#d1d5db" font-size="7.5" font-family="sans-serif">Bindshell root :1524</text>
+    <text x="507" y="200" fill="#6b9fca" font-size="8" font-family="sans-serif">HIGH</text>
+    <text x="553" y="200" fill="#d1d5db" font-size="7.5" font-family="sans-serif">MySQL :3306  VNC :5900</text>
+    <text x="507" y="215" fill="#6b9fca" font-size="8" font-family="sans-serif">HIGH</text>
+    <text x="553" y="215" fill="#d1d5db" font-size="7.5" font-family="sans-serif">Java RMI :1099  Telnet :23</text>
+    <text x="507" y="230" fill="#5a9e78" font-size="8" font-family="sans-serif">MED</text>
+    <text x="543" y="230" fill="#d1d5db" font-size="7.5" font-family="sans-serif">NFS :2049  BIND :53</text>
+    <rect x="497" y="243" width="196" height="24" rx="5" fill="#1e3040" stroke="#6b9fca" stroke-width="0.8"/>
+    <text x="595" y="259" text-anchor="middle" fill="#6b9fca" font-size="7.5" font-family="sans-serif">✅ Root shell confirmed — uid=0(root)</text>
+
+    <!-- Arrows between macOS agent and UTM network -->
+    <line x1="210" y1="105" x2="258" y2="130" stroke="#8b7ec8" stroke-width="1.3" marker-end="url(#b)" stroke-dasharray="4,2"/>
+    <text x="228" y="120" fill="#9ca3af" font-size="7" font-family="sans-serif">HTTP</text>
+
+    <!-- Arrow Kali → Metasploitable2 -->
+    <line x1="462" y1="160" x2="488" y2="160" stroke="#c29a5a" stroke-width="1.5" marker-end="url(#br)"/>
+    <text x="472" y="154" text-anchor="middle" fill="#9ca3af" font-size="7" font-family="sans-serif">exploit</text>
+  </svg>
+</section>
+
+<!-- ═══ 5 5-PHASE WORKFLOW ═══ -->
+<section>
+  <h2>5-Phase Workflow</h2>
+  <div class="phase ph1"><strong>🔍 Phase 1 — Passive Recon</strong>whois · dns_recon (PTR/MX/zone transfer) · theHarvester OSINT — <em>no packets to target</em></div>
+  <div class="phase ph2"><strong>📡 Phase 2 — Active Scan</strong>nmap (service/version) · nikto (web) · gobuster (dirs) · enum4linux (SMB) <span style="color:var(--primary);">+ Kali MCP:</span> hydra · sqlmap · masscan · ffuf</div>
+  <div class="phase ph3"><strong>🧠 Phase 3 — Intelligence</strong>searchsploit → CVE RAG lookup → fine-tuned Llama 3.1 8B analysis → ATT&amp;CK TTP mapping</div>
+  <div class="phase ph4"><strong>⚔️ Phase 4 — Exploitation &nbsp;<span style="font-weight:normal;opacity:0.7;">(suggest only — never auto-executes)</span></strong>Metasploit RPC → stage modules → map to open ports → confirm root shell paths</div>
+  <div class="phase ph5"><strong>📋 Phase 5 — Report</strong>Markdown + HTML dashboard · remediation playbooks · CVSS scores · ATT&amp;CK mapping → reports/</div>
+
+  <!-- Mini flow arrows between phases -->
+  <svg viewBox="0 0 700 28" style="width:90%;margin:0.5em auto;display:block;">
+    <defs><marker id="ph" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#6b9fca" opacity="0.7"/></marker></defs>
+    <text x="60"  y="18" text-anchor="middle" fill="#4a9bbe" font-size="9" font-family="sans-serif">RECON</text>
+    <line x1="95"  y1="14" x2="175" y2="14" stroke="#6b9fca" stroke-width="1" marker-end="url(#ph)" opacity="0.6"/>
+    <text x="210" y="18" text-anchor="middle" fill="#5a9e78" font-size="9" font-family="sans-serif">SCAN</text>
+    <line x1="245" y1="14" x2="325" y2="14" stroke="#6b9fca" stroke-width="1" marker-end="url(#ph)" opacity="0.6"/>
+    <text x="365" y="18" text-anchor="middle" fill="#8b7ec8" font-size="9" font-family="sans-serif">INTELLIGENCE</text>
+    <line x1="415" y1="14" x2="490" y2="14" stroke="#6b9fca" stroke-width="1" marker-end="url(#ph)" opacity="0.6"/>
+    <text x="530" y="18" text-anchor="middle" fill="#c29a5a" font-size="9" font-family="sans-serif">EXPLOIT</text>
+    <line x1="565" y1="14" x2="635" y2="14" stroke="#6b9fca" stroke-width="1" marker-end="url(#ph)" opacity="0.6"/>
+    <text x="665" y="18" text-anchor="middle" fill="#6b9fca" font-size="9" font-family="sans-serif">REPORT</text>
+  </svg>
+</section>
+
+<!-- ═══ 6 UNDER THE HOOD ═══ -->
+<section>
+  <h2>Under the Hood</h2>
+  <div class="grid3" style="margin-top:0.6em;">
+    <div class="card">
+      <span class="icon">📚</span>
+      <div class="label c-primary">RAG Layer</div>
+      <ul><li>ChromaDB vector store</li><li>2000+ CVEs from NVD 2.0</li><li>697 ATT&amp;CK techniques</li><li>all-MiniLM-L6-v2 embeddings</li></ul>
+    </div>
+    <div class="card">
+      <span class="icon">🦙</span>
+      <div class="label c-purple">Fine-tuned LLM</div>
+      <ul><li>Llama 3.1 8B + QLoRA</li><li>500 CVE analysis pairs</li><li>3 epochs on Colab T4</li><li>Loss: 1.92 → <span class="c-green">0.73</span></li></ul>
+    </div>
+    <div class="card">
+      <span class="icon">🐉</span>
+      <div class="label c-green">Kali MCP Server</div>
+      <ul><li>HTTP REST on Kali VM</li><li>POST /call → any Kali tool</li><li>6 tool categories</li><li>Auto fallback if unreachable</li></ul>
+    </div>
+  </div>
+  <div style="margin-top:0.9em;text-align:center;">
+    <span class="tag t-b">Claude Haiku</span>
+    <span class="tag t-p">Unsloth QLoRA</span>
+    <span class="tag t-b">ChromaDB</span>
+    <span class="tag t-g">pymetasploit3</span>
+    <span class="tag t-a">sentence-transformers</span>
+    <span class="tag t-g">nmap · nikto · gobuster · enum4linux-ng</span>
+  </div>
+
+  <!-- Loss chart -->
+  <svg viewBox="0 0 400 70" style="width:55%;margin:0.7em auto;display:block;">
+    <text x="200" y="14" text-anchor="middle" fill="#9ca3af" font-size="9" font-family="sans-serif">Fine-tuning Loss Curve</text>
+    <rect x="30" y="20" width="340" height="1" fill="#374151"/>
+    <rect x="30" y="20" width="1" height="38" fill="#374151"/>
+    <!-- bars -->
+    <rect x="60"  y="25" width="50" height="33" rx="3" fill="#8b7ec825" stroke="#8b7ec8" stroke-width="1"/>
+    <rect x="160" y="34" width="50" height="24" rx="3" fill="#8b7ec840" stroke="#8b7ec8" stroke-width="1"/>
+    <rect x="260" y="42" width="50" height="16" rx="3" fill="#8b7ec8" stroke="#8b7ec8" stroke-width="1"/>
+    <text x="85"  y="22" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">1.92</text>
+    <text x="185" y="31" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">1.28</text>
+    <text x="285" y="39" text-anchor="middle" fill="#5a9e78" font-size="8" font-family="sans-serif" font-weight="bold">0.73</text>
+    <text x="85"  y="66" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">Epoch 1</text>
+    <text x="185" y="66" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">Epoch 2</text>
+    <text x="285" y="66" text-anchor="middle" fill="#9ca3af" font-size="7.5" font-family="sans-serif">Epoch 3</text>
+  </svg>
+</section>
+
+<!-- ═══ 7 RESULTS ═══ -->
+<section>
+  <h2>Results — Metasploitable2</h2>
+
+  <!-- Severity chart -->
+  <svg viewBox="0 0 680 100" style="width:85%;margin:0.2em auto;display:block;">
+    <text x="340" y="14" text-anchor="middle" fill="#9ca3af" font-size="9" font-family="sans-serif">Findings by Severity</text>
+    <!-- CRITICAL bar -->
+    <text x="70"  y="34" text-anchor="end" fill="#6b9fca" font-size="9" font-family="sans-serif">CRITICAL</text>
+    <rect x="76"  y="22" width="360" height="16" rx="3" fill="#1e304540" stroke="#6b9fca" stroke-width="1"/>
+    <rect x="76"  y="22" width="360" height="16" rx="3" fill="#6b9fca80"/>
+    <text x="444" y="34" fill="#6b9fca" font-size="9" font-family="sans-serif" font-weight="bold">6</text>
+    <!-- HIGH bar -->
+    <text x="70"  y="58" text-anchor="end" fill="#c29a5a" font-size="9" font-family="sans-serif">HIGH</text>
+    <rect x="76"  y="46" width="360" height="16" rx="3" fill="#3a2e1a40" stroke="#c29a5a" stroke-width="1"/>
+    <rect x="76"  y="46" width="360" height="16" rx="3" fill="#c29a5a80"/>
+    <text x="444" y="58" fill="#c29a5a" font-size="9" font-family="sans-serif" font-weight="bold">6</text>
+    <!-- MEDIUM bar -->
+    <text x="70"  y="82" text-anchor="end" fill="#5a9e78" font-size="9" font-family="sans-serif">MEDIUM</text>
+    <rect x="76"  y="70" width="240" height="16" rx="3" fill="#1a3a3040" stroke="#5a9e78" stroke-width="1"/>
+    <rect x="76"  y="70" width="240" height="16" rx="3" fill="#5a9e7880"/>
+    <text x="324" y="82" fill="#5a9e78" font-size="9" font-family="sans-serif" font-weight="bold">4</text>
+  </svg>
+
+  <div class="grid2" style="margin-top:0.4em;">
+    <div class="card" style="border-color:var(--primary);">
+      <div class="label c-primary" style="font-size:0.95em;">✅ Root Shell — Samba RCE</div>
+      <div style="color:var(--dim);font-size:0.85em;margin-top:4px;">CVE-2007-2447 · CVSS 10.0<br>Session 3 → <span class="c-green">uid=0(root)</span><br>Kernel 2.6.24 · SUID nmap confirmed</div>
+    </div>
+    <div class="card" style="border-color:var(--primary);">
+      <div class="label c-primary" style="font-size:0.95em;">⚠️ 2 More Backdoors Found</div>
+      <div style="color:var(--dim);font-size:0.85em;margin-top:4px;">vsftpd 2.3.4 — CVE-2011-2523<br>UnrealIRCd 3.2.8.1 — CVE-2010-2075<br>distccd RCE confirmed via stderr</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:0.7em;font-size:0.58em;color:var(--dim);">
+    16 total findings &nbsp;·&nbsp; 30+ open ports scanned &nbsp;·&nbsp; Kali Metasploit used directly on target
+  </div>
+</section>
+
+<!-- ═══ 8 FUTURE ENHANCEMENTS ═══ -->
+<section>
+  <h2>Future Enhancements</h2>
+  <div class="grid2" style="margin-top:0.8em;">
+    <div class="card" style="border-color:var(--primary);">
+      <span class="icon">🌐</span>
+      <div class="label c-primary">Multi-target Scanning</div>
+      Accept a CIDR range and scan all hosts in parallel — agent fans out across the subnet and merges findings into one report.
+    </div>
+    <div class="card" style="border-color:var(--green);">
+      <span class="icon">🧬</span>
+      <div class="label c-green">Nuclei Integration</div>
+      Add <code>nuclei</code> as a Kali MCP tool — template-based vulnerability scanning with 9000+ community templates for web, network, and cloud targets.
+    </div>
+    <div class="card" style="border-color:var(--purple);">
+      <span class="icon">💾</span>
+      <div class="label c-purple">Agentic Memory</div>
+      Persist findings across scans so the agent learns what changed over time — detects new services, regressions, and remediation gaps automatically.
+    </div>
+    <div class="card" style="border-color:var(--amber);">
+      <span class="icon">☁️</span>
+      <div class="label c-amber">Cloud Targets</div>
+      Add AWS / Azure / GCP enumeration via boto3, az cli, and gcloud — extend the same 5-phase workflow to cloud attack surfaces.
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 9 THANK YOU ═══ -->
+<section class="center">
+  <p style="color:var(--primary);font-size:0.58em;letter-spacing:3px;text-transform:uppercase;margin-bottom:0.6em;">AI Cybersecurity Capstone</p>
+  <h1 style="font-size:2.1em;color:var(--primary);text-shadow:0 0 28px #6b9fca30;margin-bottom:0.1em;">AutoRedTeam</h1>
+  <p style="font-size:0.8em;color:var(--text);margin-top:0.2em;margin-bottom:1.2em;">Questions?</p>
+
+  <!-- Summary SVG -->
+  <svg viewBox="0 0 620 70" style="width:82%;margin:0 auto 1em;display:block;">
+    <rect x="5"   y="10" width="110" height="50" rx="8" fill="#1f2937" stroke="#6b9fca" stroke-width="1"/>
+    <rect x="130" y="10" width="110" height="50" rx="8" fill="#1f2937" stroke="#8b7ec8" stroke-width="1"/>
+    <rect x="255" y="10" width="110" height="50" rx="8" fill="#1f2937" stroke="#c29a5a" stroke-width="1"/>
+    <rect x="380" y="10" width="110" height="50" rx="8" fill="#1f2937" stroke="#5a9e78" stroke-width="1"/>
+    <rect x="505" y="10" width="110" height="50" rx="8" fill="#1f2937" stroke="#4a9bbe" stroke-width="1"/>
+    <text x="60"  y="32" text-anchor="middle" fill="#6b9fca" font-size="18" font-family="sans-serif" font-weight="bold">19</text>
+    <text x="185" y="32" text-anchor="middle" fill="#8b7ec8" font-size="18" font-family="sans-serif" font-weight="bold">2000+</text>
+    <text x="310" y="32" text-anchor="middle" fill="#c29a5a" font-size="18" font-family="sans-serif" font-weight="bold">36</text>
+    <text x="435" y="32" text-anchor="middle" fill="#5a9e78" font-size="18" font-family="sans-serif" font-weight="bold">16</text>
+    <text x="560" y="32" text-anchor="middle" fill="#4a9bbe" font-size="18" font-family="sans-serif" font-weight="bold">✅</text>
+    <text x="60"  y="50" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">Tools</text>
+    <text x="185" y="50" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">CVEs in RAG</text>
+    <text x="310" y="50" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">Tool calls</text>
+    <text x="435" y="50" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">Findings</text>
+    <text x="560" y="50" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="sans-serif">Root shell</text>
+  </svg>
+
+  <div style="display:flex;justify-content:center;gap:28px;font-size:0.56em;color:var(--dim);">
+    <div><div style="color:var(--text);font-weight:bold;margin-bottom:3px;">GitHub</div>The-Cyber-Instructor-Community/<br>AI-for-cybersecurity-bootcamp-projects</div>
+    <div style="border-left:1px solid var(--border);padding-left:28px;"><div style="color:var(--text);font-weight:bold;margin-bottom:3px;">Stack</div>Claude · RAG · QLoRA · MCP · Kali</div>
+    <div style="border-left:1px solid var(--border);padding-left:28px;"><div style="color:var(--text);font-weight:bold;margin-bottom:3px;">Target</div>Metasploitable2<br>6 CRITICAL · 6 HIGH</div>
+  </div>
+
+  <div style="margin-top:1.2em;">
+    <span class="badge">🤖 Claude Haiku</span>
+    <span class="badge">🦙 Llama 3.1 8B QLoRA</span>
+    <span class="badge">🐉 Kali MCP</span>
+    <span class="badge">📊 36 tool calls</span>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', transitionSpeed:'fast', controls:true, progress:true, slideNumber:true });</script>
+</body>
+</html>

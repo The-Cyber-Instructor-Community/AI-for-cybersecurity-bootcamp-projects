@@ -13,6 +13,8 @@ Start on Kali:
 import argparse
 import subprocess
 import json
+import os
+import secrets
 import shutil
 from pathlib import Path
 
@@ -27,6 +29,17 @@ import uvicorn
 
 
 app = Server("kali-autoredteam")
+
+# ── Auth token — set MCP_API_TOKEN in environment before starting ──
+_API_TOKEN = os.environ.get("MCP_API_TOKEN", "")
+
+
+def _check_auth(request: Request) -> bool:
+    """Return True if the request carries a valid Bearer token."""
+    if not _API_TOKEN:
+        return True  # token not configured — warn at startup but don't block (dev mode)
+    auth = request.headers.get("Authorization", "")
+    return secrets.compare_digest(auth, f"Bearer {_API_TOKEN}")
 
 
 def _available(binary: str) -> bool:
@@ -55,7 +68,7 @@ ALLOWED = {
                         "arp-scan", "ping", "traceroute", "host", "dig", "nslookup",
                         "enum4linux-ng", "enum4linux", "nbtscan"},
     "web_scan":        {"nikto", "gobuster", "dirb", "wfuzz", "sqlmap", "whatweb",
-                        "wafw00f", "ffuf", "feroxbuster", "curl", "wget"},
+                        "wafw00f", "ffuf", "feroxbuster", "curl", "wget", "nuclei"},
     "smb_enum":        {"enum4linux-ng", "enum4linux", "smbmap", "smbclient",
                         "rpcclient", "nbtscan", "crackmapexec"},
     "exploit":         {"msfconsole", "searchsploit", "msfvenom"},
@@ -94,6 +107,8 @@ def _execute(category: str, tool: str, args: list, timeout: int) -> dict:
 # POST /call  {"category": "recon", "tool": "nmap", "args": [...], "timeout": 120}
 
 async def handle_call(request: Request) -> JSONResponse:
+    if not _check_auth(request):
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
     try:
         body     = await request.json()
         category = body.get("category", "")
@@ -174,5 +189,10 @@ if __name__ == "__main__":
     print(f"[*] Kali MCP Server starting on {args.host}:{args.port}")
     print(f"[*] REST endpoint: http://<kali-ip>:{args.port}/call")
     print(f"[*] MCP endpoint:  http://<kali-ip>:{args.port}/sse")
+    if _API_TOKEN:
+        print(f"[*] Auth: Bearer token configured (MCP_API_TOKEN)")
+    else:
+        print("[!] WARNING: MCP_API_TOKEN not set — server is unauthenticated!")
+        print("[!]   Set it: export MCP_API_TOKEN=<your-secret> before starting")
 
     uvicorn.run(create_app(app), host=args.host, port=args.port)
