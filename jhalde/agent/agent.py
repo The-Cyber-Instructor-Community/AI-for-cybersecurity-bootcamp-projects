@@ -34,6 +34,7 @@ from agent.kali_client import call_kali_tool, check_kali_reachable
 from agent.report import save_report, save_cidr_summary
 from agent.remediation import enhance_report
 from agent.html_report import save_html_report
+from agent.memory import get_context, save_scan, list_scans, days_since_last_scan
 
 console = Console()
 
@@ -205,18 +206,24 @@ def run_agent(target: str, ports: str = "1-1000") -> str:
         border_style="cyan"
     ))
 
-    messages = [
-        {
-            "role": "user",
-            "content": (
-                f"Perform a full security assessment of target: {target}\n"
-                f"Scan port range: {ports}\n"
-                f"Today's date: {datetime.now().strftime('%Y-%m-%d')}\n\n"
-                "Start with nmap, then follow the workflow. "
-                "When complete, write the full pentest report."
-            ),
-        }
-    ]
+    # ── Inject prior scan memory into first message ───────────
+    memory_ctx = get_context(target)
+    if memory_ctx:
+        console.print("[bold blue][*] Memory: loaded prior scan history for this target[/]")
+
+    first_message = (
+        f"Perform a full security assessment of target: {target}\n"
+        f"Scan port range: {ports}\n"
+        f"Today's date: {datetime.now().strftime('%Y-%m-%d')}\n\n"
+    )
+    if memory_ctx:
+        first_message += memory_ctx + "\n\n"
+    first_message += (
+        "Start with nmap, then follow the workflow. "
+        "When complete, write the full pentest report."
+    )
+
+    messages = [{"role": "user", "content": first_message}]
 
     tool_call_count = 0
     final_report    = ""
@@ -309,6 +316,13 @@ def run_agent(target: str, ports: str = "1-1000") -> str:
             console.print(f"[yellow]Unexpected stop reason: {response.stop_reason}[/]")
             break
 
+    if final_report:
+        try:
+            save_scan(target, final_report)
+            console.print("[blue][*] Memory: scan results saved to history[/]")
+        except Exception as e:
+            console.print(f"[yellow][!] Memory save failed: {e}[/]")
+
     return final_report
 
 
@@ -393,15 +407,67 @@ def run_cidr_scan(cidr: str, ports: str = "1-1000") -> None:
     ))
 
 
+def _print_history(target=None) -> None:
+    """Print scan history as a table."""
+    from rich.table import Table
+    scans = list_scans(target)
+    if not scans:
+        console.print("[yellow]No scan history found.[/]")
+        return
+    table = Table(title="AutoRedTeam Scan History", show_lines=True)
+    table.add_column("ID",      style="dim",    width=4)
+    table.add_column("Target",  style="cyan",   min_width=18)
+    table.add_column("Date",    style="white",  min_width=19)
+    table.add_column("CRIT",    style="red",    width=5)
+    table.add_column("HIGH",    style="yellow", width=5)
+    table.add_column("MED",     style="blue",   width=5)
+    table.add_column("LOW",     style="green",  width=5)
+    table.add_column("Ports",   style="dim",    min_width=20)
+    for s in scans:
+        table.add_row(
+            str(s["id"]),
+            s["target"],
+            s["scanned_at"],
+            str(s["crit"]),
+            str(s["high"]),
+            str(s["medium"]),
+            str(s["low"]),
+            (s["ports_open"] or "")[:40],
+        )
+    console.print(table)
+
+
 def main():
     parser = argparse.ArgumentParser(description="AutoRedTeam — AI Pentest Agent")
-    parser.add_argument("target",
+    parser.add_argument("target", nargs="?",
                         help="Target IP, domain, URL, or CIDR range (e.g. 192.168.64.0/24)")
-    parser.add_argument("--ports", default="1-1000", help="Port range (default: 1-1000)")
+    parser.add_argument("--ports",   default="1-1000", help="Port range (default: 1-1000)")
+    parser.add_argument("--history", action="store_true",
+                        help="Show scan history (optionally filtered by target)")
+    parser.add_argument("--force",   action="store_true",
+                        help="Scan even if target was recently scanned")
     args = parser.parse_args()
 
+    # --history: show table and exit
+    if args.history:
+        _print_history(args.target)
+        return
+
+    if not args.target:
+        parser.error("target is required unless using --history")
+
+    # Warn if scanned recently (within 7 days) and --force not set
+    if not args.force:
+        age = days_since_last_scan(args.target)
+        if age is not None and age < 7:
+            console.print(
+                f"[yellow][!] {args.target} was last scanned {age:.1f} day(s) ago.[/]\n"
+                f"    Use [bold]--force[/] to re-scan anyway, or [bold]--history[/] to review past results."
+            )
+            return
+
     # Route CIDR ranges to multi-host scan
-    if "/" in args.target:
+    if args.target and "/" in args.target:
         try:
             ipaddress.ip_network(args.target, strict=False)
             run_cidr_scan(args.target, args.ports)

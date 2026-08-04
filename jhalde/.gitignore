@@ -38,3 +38,6 @@ reports/
 BLOG_POST.md
 autoredteam_slides.html
 images/
+
+# Agentic memory DB (local scan history — contains target data)
+autoredteam_memory.db
