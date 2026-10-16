@@ -433,6 +433,28 @@ TOOL_DEFINITIONS = [
             "required": ["query"],
         },
     },
+    {
+        "name": "query_epss",
+        "description": (
+            "Look up the EPSS (Exploit Prediction Scoring System) score for one or more CVEs. "
+            "EPSS is the probability (0-100%) that a CVE will be exploited in the wild within 30 days. "
+            "Use this alongside CVSS to prioritize findings: a HIGH CVSS + HIGH EPSS = critical priority; "
+            "a HIGH CVSS + LOW EPSS = less urgent in practice. "
+            "Call this for every CVE found during the assessment — it takes a list so you can batch them. "
+            "Data is from FIRST.org and updated daily. No API key required."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "cves": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of CVE IDs to look up (e.g. ['CVE-2011-2523', 'CVE-2007-2447'])",
+                },
+            },
+            "required": ["cves"],
+        },
+    },
 ]
 
 
@@ -463,6 +485,78 @@ def _query_collection(collection_name: str, query: str, top_k: int = 3) -> str:
         return "\n\n---\n\n".join(output)
     except Exception as e:
         return f"RAG query error: {e}"
+
+
+# ── EPSS lookup ───────────────────────────────────────────────
+
+_EPSS_API = "https://api.first.org/data/v1/epss"
+
+def _fetch_epss(cves: list) -> str:
+    """
+    Fetch EPSS scores for a list of CVE IDs from FIRST.org.
+    Returns a JSON string with each CVE's probability and percentile.
+    No API key required.
+    """
+    import httpx
+
+    if not cves:
+        return json.dumps({"error": "No CVE IDs provided"})
+
+    # Deduplicate and clean
+    clean_cves = [c.strip().upper() for c in cves if c.strip()]
+    if not clean_cves:
+        return json.dumps({"error": "No valid CVE IDs after cleaning"})
+
+    # API accepts up to 30 CVEs per request as ?cve=CVE-X&cve=CVE-Y
+    batch  = clean_cves[:30]
+    params = "&".join(f"cve={c}" for c in batch)
+    url    = f"{_EPSS_API}?{params}"
+
+    try:
+        resp = httpx.get(url, headers={"User-Agent": "AutoRedTeam/1.0"}, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+    except Exception as e:
+        return json.dumps({"error": f"EPSS fetch failed: {e}"})
+
+    if data.get("status") != "OK" or not data.get("data"):
+        # CVEs not yet scored (very new or reserved) — return graceful result
+        return json.dumps({
+            "note": "No EPSS data returned — CVEs may be too new or not yet scored",
+            "queried": batch,
+        })
+
+    results = []
+    scored_cves = {row["cve"]: row for row in data["data"]}
+
+    for cve in batch:
+        row = scored_cves.get(cve)
+        if row:
+            epss_pct  = float(row["epss"]) * 100
+            perc_pct  = float(row["percentile"]) * 100
+            if epss_pct >= 50:
+                risk = "CRITICAL — actively exploited in the wild"
+            elif epss_pct >= 10:
+                risk = "HIGH — significant exploitation activity"
+            elif epss_pct >= 1:
+                risk = "MEDIUM — some exploitation activity"
+            else:
+                risk = "LOW — rarely exploited in practice"
+            results.append({
+                "cve":        cve,
+                "epss_score": f"{epss_pct:.2f}%",
+                "percentile": f"{perc_pct:.1f}th percentile",
+                "risk_label": risk,
+            })
+        else:
+            results.append({
+                "cve":        cve,
+                "epss_score": "N/A",
+                "percentile": "N/A",
+                "risk_label": "Not yet scored by EPSS",
+            })
+
+    return json.dumps({"epss_results": results}, indent=2)
 
 
 # ── Tool executor ─────────────────────────────────────────────
@@ -608,6 +702,9 @@ def execute_tool(name: str, inputs: dict) -> str:
             query=inputs["query"],
             top_k=inputs.get("top_k", 3),
         )
+
+    elif name == "query_epss":
+        return _fetch_epss(inputs.get("cves", []))
 
     else:
         return f"Unknown tool: {name}"
