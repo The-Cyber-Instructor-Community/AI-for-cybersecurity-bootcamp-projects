@@ -1,0 +1,9 @@
+# The five core check families: what each one maps to (OWASP LLM 2026, OWASP Agentic 2026, ATLAS v2026.09).
+# Static Scan, attack selection and the report all read this one file.
+families:
+  1: {name: Direct prompt injection,               owasp: [LLM01, ASI01], atlas: [AML.T0051.000, AML.T0068]}
+  2: {name: Indirect prompt injection via tools/RAG, owasp: [LLM01, LLM09], atlas: [AML.T0051.001, AML.T0070, AML.T0071, AML.T0110.002]}
+  3: {name: Excessive agency,                      owasp: [LLM03, ASI02], atlas: [AML.T0053, AML.T0086, AML.T0101]}
+  6: {name: Hidden context / secret leakage,       owasp: [LLM08, LLM02], atlas: [AML.T0056, AML.T0057, AML.T0083]}
+  7: {name: Insecure agent-to-agent communication, owasp: [ASI07, ASI08], atlas: [AML.T0051, AML.T0080, AML.T0110.002]}
+  5: {name: Improper output handling,              owasp: [LLM10, ASI02], atlas: [AML.T0077, AML.T0053]}

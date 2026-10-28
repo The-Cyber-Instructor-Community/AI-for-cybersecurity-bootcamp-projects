@@ -1,0 +1,16 @@
+# OWASP Top 10 for LLM Applications (2026). Official list:
+# https://github.com/GenAI-Security-Project/GenAI-LLM-Top10
+# core: true = used by the five check families built in the 5-day plan.
+# was_2025 = the same risk's ID in the 2025 edition, for reading older material.
+source: OWASP Top 10 for LLM Applications 2026
+items:
+  - {id: LLM01, name: Prompt Injection,                 was_2025: LLM01, core: true}
+  - {id: LLM02, name: Sensitive Information Disclosure, was_2025: LLM02, core: true}
+  - {id: LLM03, name: Excessive Agency,                 was_2025: LLM06, core: true}
+  - {id: LLM04, name: Supply Chain,                     was_2025: LLM03, core: false}
+  - {id: LLM05, name: Data and Model Poisoning,         was_2025: LLM04, core: false}
+  - {id: LLM06, name: Unbounded Consumption,            was_2025: LLM10, core: false}
+  - {id: LLM07, name: Misinformation,                   was_2025: LLM09, core: false}
+  - {id: LLM08, name: Hidden Context Exposure,          was_2025: LLM07, core: true}   # was "System Prompt Leakage"
+  - {id: LLM09, name: Vector and Embedding Weaknesses,  was_2025: LLM08, core: true}
+  - {id: LLM10, name: Improper Output Handling,         was_2025: LLM05, core: false}

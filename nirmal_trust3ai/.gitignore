@@ -1,0 +1,23 @@
+# --- secrets (never commit) ---
+.env
+.env~
+*.key
+
+# --- python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# --- test / tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# --- Sentinel run outputs (generated; not source) ---
+runs/
+
+# --- target runtime artifacts ---
+targets/helpdeskbot/sandbox/outbox.jsonl
