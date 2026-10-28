@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chimera Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/static/tokens.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/glass.css">
+  <script>
+    // Pick the remembered view before anything paints, so the page doesn't flash the other one.
+    (function () { var v = "simple"; try { v = localStorage.getItem("chimera.view") || "simple"; } catch (e) {} document.documentElement.dataset.view = v; })();
+  </script>
+</head>
+<body data-view="simple">
+  <script>document.body.dataset.view = document.documentElement.dataset.view || "simple";</script>
+  <div class="gbackdrop" aria-hidden="true"></div>
+
+  <!-- Top bar, shared by both views. Simple is the recruiter's view; Advanced is the full console. -->
+  <header class="gbar">
+    <div class="gbar-in">
+      <a class="gbrand" href="#/cases">Chimera</a>
+      <nav class="gnav" aria-label="Sections">
+        <a href="#/cases" data-page="cases">Cases</a>
+        <a href="#/interviews" data-page="interviews">Interviews</a>
+        <a href="#/reports" data-page="reports">Reports</a>
+        <a href="#/watchlist" data-page="watchlist">Watchlist</a>
+      </nav>
+      <div class="gstatus" id="gstatus" role="status"><i aria-hidden="true"></i><span>Checking the server…</span></div>
+      <div class="gswitch" role="group" aria-label="View">
+        <button type="button" data-view-btn="simple" aria-pressed="true">Simple</button>
+        <button type="button" data-view-btn="advanced" aria-pressed="false">Advanced</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Simple view: drawn by simple.js (it draws the page's outline at once, then the data) -->
+  <main id="simple"></main>
+
+  <!-- Advanced view: the dense console (app.js), in the same glass style (style.css) -->
+  <div class="advanced" id="advanced">
+    <div class="adv-health"><div class="health" id="health" aria-live="polite"><span class="pill">Checking the server…</span></div></div>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Cases">
+        <div class="side-head">
+          <input id="search" type="search" placeholder="Filter cases" aria-label="Filter cases">
+          <button id="btn-new" class="btn">New case</button>
+        </div>
+        <ul id="case-list" class="case-list" aria-busy="true"><li class="hint">Loading cases…</li></ul>
+        <div class="side-foot">
+          <button id="btn-run-all" class="btn primary">Collect evidence (all cases)</button>
+          <p class="hint">Runs <code>python -m chimera run</code>. Every case is scored in one batch so template reuse can compare resumes.</p>
+          <button id="btn-watchlist" class="btn">Watchlist admin</button>
+        </div>
+      </aside>
+
+      <!-- a section, not a second <main>: the Simple view's #simple is the page's main landmark -->
+      <section id="main" class="main" aria-label="Case">
+        <section class="empty">
+          <h1>Pick a case</h1>
+          <p>Each case folder holds an application, a resume and, once recorded, the interview. Collect evidence to score it in code, then run the analysts to get the report. A person makes the final call.</p>
+        </section>
+      </section>
+    </div>
+
+    <section class="drawer" id="drawer" aria-label="Job log" hidden>
+      <div class="drawer-head">
+        <span id="drawer-title">Job</span>
+        <span class="pill" id="drawer-status">running</span>
+        <button class="btn small" id="drawer-close">Hide</button>
+      </div>
+      <pre id="drawer-log" class="log"></pre>
+    </section>
+  </div>
+
+  <!-- New case, Advanced view: every field at once -->
+  <dialog id="dlg-new" class="dialog">
+    <form id="form-new" method="dialog" enctype="multipart/form-data">
+      <h2>New case</h2>
+      <p class="hint">What the applicant submitted, plus what the applicant-tracking system observed. Synthetic or consented data only.</p>
+      <div class="grid">
+        <label>Name <input name="name" required></label>
+        <label>Case id <input name="case_id" placeholder="auto"></label>
+        <label>Emails <input name="emails" placeholder="comma separated"></label>
+        <label>Phones <input name="phones" placeholder="+1 555 0100"></label>
+        <label>LinkedIn <input name="linkedin"></label>
+        <label>GitHub <input name="github"></label>
+        <label>Telegram <input name="telegram"></label>
+        <label>Years of experience <input name="years_experience" type="number" min="0" max="60"></label>
+        <label>City <input name="city"></label>
+        <label>State <input name="state"></label>
+        <label>Country <input name="country" placeholder="US"></label>
+        <label>Submitted on <input name="submitted_at" type="date"></label>
+      </div>
+      <h3>Observed by the ATS</h3>
+      <div class="grid">
+        <label>Application IP <input name="ip"></label>
+        <label>IP country <input name="ip_country" placeholder="US"></label>
+        <label>ASN <input name="asn" type="number"></label>
+        <label>ASN owner <input name="asn_org" placeholder="Comcast Cable"></label>
+        <label>Phone line type <input name="line_type" placeholder="mobile, landline, nonFixedVoip"></label>
+        <label>Carrier <input name="carrier"></label>
+        <label>LinkedIn created <input name="linkedin_created" type="date"></label>
+        <label>GitHub created <input name="github_created" type="date"></label>
+      </div>
+      <h3>Files</h3>
+      <div class="grid">
+        <label>Resume (PDF or text) <input name="resume" type="file" accept=".pdf,.txt,application/pdf,text/plain"></label>
+        <label>ID document (passport page or ID card, JPG or PNG) <input name="id_document" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png"></label>
+        <label class="check"><input name="id_face_consent" type="checkbox" value="true"> The applicant consented to comparing their ID photo with the interview video (a biometric check)</label>
+        <label class="check"><input name="camera_refused" type="checkbox" value="true"> Camera refused or "broken" in the interview</label>
+        <label>Camera note <input name="camera_note"></label>
+        <label class="check"><input name="identity_consent" type="checkbox" value="true"> The applicant consented to identity checks (needed before any lookup leaves this machine)</label>
+      </div>
+      <div class="actions">
+        <p class="dlg-err" id="dlg-err" role="alert"></p>
+        <button type="button" class="btn" id="dlg-cancel">Cancel</button>
+        <button type="submit" class="btn primary">Create case</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- New case, Simple view: the short form, with the rest behind "Add more details" -->
+  <dialog id="gdlg-new" class="gdlg" aria-labelledby="gdlg-title">
+    <form id="gform-new" novalidate>
+      <h2 id="gdlg-title">New case</h2>
+      <p class="gdlg-sub">Only the name is required. Synthetic or consented data only.</p>
+      <div class="gdlg-b">
+        <label class="gfield" id="gf-name">Name
+          <input name="name" autocomplete="off" aria-describedby="gf-name-err">
+          <span class="gerr" id="gf-name-err"></span>
+        </label>
+        <label class="gfield">Email <input name="emails" type="email" autocomplete="off"></label>
+        <input type="file" name="resume" id="gf-resume" accept=".pdf,.txt,application/pdf,text/plain" hidden>
+        <div class="gdrop" id="gf-drop" role="button" tabindex="0">Drop resume PDF or choose a file</div>
+        <button type="button" class="gmore-btn" id="gf-more-btn" aria-expanded="false" aria-controls="gf-more">Add more details<span>phone, profiles, location, ATS data</span></button>
+        <div class="gmore" id="gf-more" hidden>
+          <label class="gfield">Phone <input name="phones" autocomplete="off"></label>
+          <label class="gfield">LinkedIn <input name="linkedin" autocomplete="off"></label>
+          <label class="gfield">GitHub <input name="github" autocomplete="off"></label>
+          <label class="gfield">Telegram <input name="telegram" autocomplete="off"></label>
+          <label class="gfield">City <input name="city" autocomplete="off"></label>
+          <label class="gfield">State <input name="state" autocomplete="off"></label>
+          <label class="gfield">Country <input name="country" placeholder="US" autocomplete="off"></label>
+          <label class="gfield">Years of experience <input name="years_experience" type="number" min="0" max="60"></label>
+          <label class="gfield">Submitted on <input name="submitted_at" type="date"></label>
+          <h3>Observed by the ATS</h3>
+          <label class="gfield">Application IP <input name="ip" autocomplete="off"></label>
+          <label class="gfield">IP country <input name="ip_country" placeholder="US" autocomplete="off"></label>
+          <label class="gfield">ASN <input name="asn" type="number"></label>
+          <label class="gfield">ASN owner <input name="asn_org" autocomplete="off"></label>
+          <label class="gfield gwide">Phone line type <input name="line_type" placeholder="mobile, landline, nonFixedVoip" autocomplete="off"></label>
+          <label class="gfield">Carrier <input name="carrier" autocomplete="off"></label>
+          <label class="gfield">LinkedIn created <input name="linkedin_created" type="date"></label>
+          <label class="gfield">GitHub created <input name="github_created" type="date"></label>
+          <label class="gcheck"><input name="camera_refused" type="checkbox" value="true"> Camera refused or "broken" in the interview</label>
+          <label class="gcheck"><input name="identity_consent" type="checkbox" value="true"> The applicant consented to identity checks</label>
+          <h3>ID document</h3>
+          <label class="gfield gwide">Passport page or ID card (JPG or PNG) <input name="id_document" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png"></label>
+          <!-- a separate consent: comparing the ID photo with the interview face is a biometric check (Oct 24) -->
+          <label class="gcheck"><input name="id_face_consent" type="checkbox" value="true"> The applicant consented to comparing their ID photo with the interview video (a biometric check)</label>
+        </div>
+      </div>
+      <div class="gdlg-f">
+        <p class="gerr gdlg-err" id="gf-err" role="alert"></p>
+        <button type="button" class="gbtn ghost" id="gf-cancel">Cancel</button>
+        <button type="submit" class="gbtn">Create case</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Watchlist admin (Simple view, #/watchlist): add, edit, retire, restore, import, use the original file.
+       simple.js fills the form for each action. -->
+  <dialog id="gwl-dlg" class="gdlg" aria-labelledby="gwl-dlg-title">
+    <form id="gwl-form" novalidate></form>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="assertive"></div>
+  <div id="gtoasts" class="gtoasts" aria-live="assertive"></div>
+  <script type="module" src="/static/app.js"></script>
+  <script type="module" src="/static/simple.js"></script>
+</body>
+</html>

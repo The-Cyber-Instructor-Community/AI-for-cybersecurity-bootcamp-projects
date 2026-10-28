@@ -1,0 +1,6 @@
+# Chimera Console (local web UI). Install after requirements.txt:  pip install -r requirements-ui.txt
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+httpx>=0.27
+reportlab>=4.0
