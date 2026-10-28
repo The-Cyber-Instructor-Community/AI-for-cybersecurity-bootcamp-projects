@@ -1,0 +1,44 @@
+{
+  "case_id": "case_008",
+  "candidate": {
+    "name": "Derek Medina",
+    "emails": [
+      "derek.medina5659@example.org"
+    ],
+    "phones": [
+      "+14805550107"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-derek-medina-7da2",
+    "github": "https://github.com/synth-dmedina242",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Raleigh",
+      "state": "NC",
+      "country": "US"
+    },
+    "claimed_years_experience": 6
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "192.0.2.1",
+    "ip_lookup": {
+      "country": "US",
+      "asn": 21928,
+      "asn_org": "T-Mobile USA, Inc."
+    },
+    "phone_lookup": {
+      "line_type": "nonFixedVoip",
+      "carrier": "Google (Grand Central)"
+    },
+    "accounts": {
+      "linkedin_created": "2026-03-27",
+      "github_created": "2020-03-18"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": ""
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "case_id": "case_001",
+  "candidate": {
+    "name": "Michael Johnson",
+    "emails": [
+      "mjohnson.dev8220@example.com"
+    ],
+    "phones": [
+      "+16175550156"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-michael-johnson-0702",
+    "github": "https://github.com/synth-mjohnson21",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Denver",
+      "state": "CO",
+      "country": "US"
+    },
+    "claimed_years_experience": 6
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "192.0.2.210",
+    "ip_lookup": {
+      "country": "US",
+      "asn": 7922,
+      "asn_org": "Comcast Cable Communications, LLC"
+    },
+    "phone_lookup": {
+      "line_type": "mobile",
+      "carrier": "T-Mobile USA"
+    },
+    "accounts": {
+      "linkedin_created": "2018-11-04",
+      "github_created": "2017-09-30"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": ""
+  }
+}

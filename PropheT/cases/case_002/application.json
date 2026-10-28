@@ -1,0 +1,44 @@
+{
+  "case_id": "case_002",
+  "candidate": {
+    "name": "Tracey Tucker",
+    "emails": [
+      "tracey.tucker9471@example.net"
+    ],
+    "phones": [
+      "+16465550122"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-tracey-tucker-857a",
+    "github": "https://github.com/synth-ttucker657",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Austin",
+      "state": "TX",
+      "country": "US"
+    },
+    "claimed_years_experience": 9
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "198.51.100.111",
+    "ip_lookup": {
+      "country": "PL",
+      "asn": 5617,
+      "asn_org": "Orange Polska Spolka Akcyjna"
+    },
+    "phone_lookup": {
+      "line_type": "mobile",
+      "carrier": "T-Mobile USA"
+    },
+    "accounts": {
+      "linkedin_created": "2026-08-14",
+      "github_created": "2026-08-29"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": ""
+  }
+}

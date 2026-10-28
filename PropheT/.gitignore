@@ -1,0 +1,59 @@
+# Real data never goes in git. Put watchlists and other private files in data/.
+data/*
+!data/README.md
+
+# Pipeline outputs (regenerate with python -m chimera run)
+out/
+
+# Live lookup results hold personal data (python -m chimera lookup). Keep them local.
+cases/*/lookups.json
+cases/*/leads.json
+# ID documents (chimera/idcheck.py) are personal documents, even the specimens made for testing.
+cases/*/id_document.*
+
+# Interview recordings show real faces, and their audio tracks real voices. Keep them local.
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi
+*.m4v
+*.m4a
+*.wav
+*.mp3
+*.opus
+*.ogg
+*.flac
+*.aac
+*.part
+
+# Model weights
+models/
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# Secrets
+.env
+
+# Python and OS junk
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.DS_Store
+desktop.ini
+Thumbs.db
+*.egg-info/
+build/
+dist/
+
+# held-out synthetic batches for the agents (regenerate with synth/make_synthetic.py --first 101)
+cases_heldout/
+data_heldout/
+out_heldout/
+
+# The demo cases (scripts/make_demo_cases.py): real recordings of Darpan and a specimen ID. Keep them local.
+cases_demo/

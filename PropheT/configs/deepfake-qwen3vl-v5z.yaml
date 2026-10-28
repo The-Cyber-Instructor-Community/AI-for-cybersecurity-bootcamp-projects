@@ -1,0 +1,54 @@
+# Run 5z (Oct 20): the same Studio settings as Runs 3 and 5, checked against both runs' training_args.bin.
+# Dataset: data/studio_train_v5z.parquet; evaluation: data/studio_val_v5.parquet.
+training:
+  max_seq_length: 2048
+  num_epochs: 1
+  learning_rate: 0.0002
+  embedding_learning_rate: null
+  batch_size: 8
+  gradient_accumulation_steps: 1
+  warmup_steps: 3
+  max_steps: 0
+  save_steps: 500
+  eval_steps: 0.1
+  weight_decay: 0.001
+  random_seed: 3407
+  packing: false
+  train_on_completions: false
+  gradient_checkpointing: unsloth
+  offload_layers: 0
+  offload_vram_gb: null
+  offload_vram_gb_per_device: {}
+  prefetch_depth: 2
+  optim: adamw_8bit
+  lr_scheduler_type: linear
+  vision_image_size: null
+lora:
+  lora_r: 16
+  lora_alpha: 16
+  lora_dropout: 0
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+    - qkv
+    - proj
+    - linear_fc1
+    - linear_fc2
+  use_rslora: false
+  use_loftq: false
+  use_dora: false
+  finetune_vision_layers: true
+  finetune_language_layers: true
+  finetune_attention_modules: true
+  finetune_mlp_modules: true
+logging:
+  enable_wandb: false
+  wandb_project: llm-finetuning
+  enable_tensorboard: false
+  tensorboard_dir: runs
+  log_frequency: 10

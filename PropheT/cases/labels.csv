@@ -1,0 +1,11 @@
+case_id,label,scenario,expected_band
+case_001,real,Common name resembles a watchlist persona; nothing else,Low
+case_002,fake,Phone reused by a 9-persona ring; IP in another country; new accounts; ring resume template,High
+case_003,fake,Same ring resume template; VoIP number; camera refused,High
+case_004,real,Applied through a commercial VPN; nothing else,Low
+case_005,fake,Hidden prompt injection in resume; email matches a watchlist persona via a +tag,High
+case_006,real,Dark resume header with white name text; hidden ATS keyword stuffing,Low
+case_007,fake,GitHub matches a High persona; VPS IP; new accounts; clean resume (one family only),Review
+case_008,real,Google Voice number and a new LinkedIn; real person,Review
+case_009,real,Real person whose LinkedIn was impersonated by a watchlist persona,Low
+case_010,fake,Clean on paper; only the video can catch it (attach a face-swap clip),Low

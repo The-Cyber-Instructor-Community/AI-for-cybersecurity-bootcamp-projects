@@ -1,0 +1,44 @@
+{
+  "case_id": "case_010",
+  "candidate": {
+    "name": "Renee Carroll",
+    "emails": [
+      "reneecarroll3445@example.com"
+    ],
+    "phones": [
+      "+14045550101"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-renee-carroll-eebf",
+    "github": "https://github.com/synth-rcarroll109",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Atlanta",
+      "state": "GA",
+      "country": "US"
+    },
+    "claimed_years_experience": 5
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "203.0.113.5",
+    "ip_lookup": {
+      "country": "US",
+      "asn": 7922,
+      "asn_org": "Comcast Cable Communications, LLC"
+    },
+    "phone_lookup": {
+      "line_type": "mobile",
+      "carrier": "T-Mobile USA"
+    },
+    "accounts": {
+      "linkedin_created": "2022-09-04",
+      "github_created": "2022-02-16"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": "Phase 3: add the face-swapped recording as interview.mp4 and set liveness_step."
+  }
+}

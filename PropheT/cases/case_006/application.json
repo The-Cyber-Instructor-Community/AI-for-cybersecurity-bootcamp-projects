@@ -1,0 +1,44 @@
+{
+  "case_id": "case_006",
+  "candidate": {
+    "name": "Nicole Hernandez",
+    "emails": [
+      "nicolehernandez8562@example.org"
+    ],
+    "phones": [
+      "+12125550196"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-nicole-hernandez-e788",
+    "github": "https://github.com/synth-nhernandez59",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Boston",
+      "state": "MA",
+      "country": "US"
+    },
+    "claimed_years_experience": 5
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "192.0.2.230",
+    "ip_lookup": {
+      "country": "US",
+      "asn": 7018,
+      "asn_org": "AT&T Services, Inc."
+    },
+    "phone_lookup": {
+      "line_type": "mobile",
+      "carrier": "T-Mobile USA"
+    },
+    "accounts": {
+      "linkedin_created": "2019-12-09",
+      "github_created": "2019-08-31"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": ""
+  }
+}

@@ -1,0 +1,42 @@
+# Run 5z, second seed (Oct 21): Studio's CLI config, run through scripts/studio_train_vlm.py (the plain `unsloth train`
+# drops the pictures and changes two settings; see that file). Run 5z's settings as the Studio app sent them
+# (studio.db, read with scripts/studio_run_config.py) with one change: random_seed 2026 (Run 5z: 3407). The CLI has no
+# evaluation set, so there are no eval losses; evaluation does not change the weights. On the PC the dataset path was
+# absolute and output_dir was Studio's outputs folder (..._project-deepfake-qwen3vl-v5z-s2_vlm).
+model: unsloth/Qwen3-VL-4B-Instruct
+data:
+  local_dataset:
+    - data/studio_train_v5z.parquet
+  format_type: auto
+training:
+  training_type: lora
+  max_seq_length: 2048
+  load_in_4bit: false
+  output_dir: outputs/deepfake-qwen3vl-v5z-s2
+  num_epochs: 1
+  learning_rate: 0.0002
+  batch_size: 8
+  gradient_accumulation_steps: 1
+  warmup_steps: 3
+  max_steps: 0
+  save_steps: 500
+  weight_decay: 0.001
+  random_seed: 2026
+  packing: false
+  train_on_completions: false
+  gradient_checkpointing: unsloth
+lora:
+  lora_r: 16
+  lora_alpha: 16
+  lora_dropout: 0.0
+  vision_all_linear: false   # ignored: studio_train_vlm.py sends the app's 11 target module names
+  use_rslora: false
+  use_loftq: false
+  use_dora: false
+  finetune_vision_layers: true
+  finetune_language_layers: true
+  finetune_attention_modules: true
+  finetune_mlp_modules: true
+logging:
+  enable_wandb: false
+  enable_tensorboard: false

@@ -1,0 +1,44 @@
+{
+  "case_id": "case_009",
+  "candidate": {
+    "name": "Jennifer Lee",
+    "emails": [
+      "jennifer.lee1173@example.org"
+    ],
+    "phones": [
+      "+14085550167"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-jennifer-lee-6dc0",
+    "github": "https://github.com/synth-jlee703",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Portland",
+      "state": "OR",
+      "country": "US"
+    },
+    "claimed_years_experience": 10
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "192.0.2.241",
+    "ip_lookup": {
+      "country": "US",
+      "asn": 7922,
+      "asn_org": "Comcast Cable Communications, LLC"
+    },
+    "phone_lookup": {
+      "line_type": "mobile",
+      "carrier": "T-Mobile USA"
+    },
+    "accounts": {
+      "linkedin_created": "2018-07-27",
+      "github_created": "2017-03-14"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": ""
+  }
+}

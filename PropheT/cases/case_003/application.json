@@ -1,0 +1,44 @@
+{
+  "case_id": "case_003",
+  "candidate": {
+    "name": "Jonathan Nichols",
+    "emails": [
+      "jonathannichols6378@example.com"
+    ],
+    "phones": [
+      "+16505550102"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-jonathan-nichols-9960",
+    "github": "https://github.com/synth-jnichols569",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Miami",
+      "state": "FL",
+      "country": "US"
+    },
+    "claimed_years_experience": 6
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "198.51.100.213",
+    "ip_lookup": {
+      "country": "US",
+      "asn": 20115,
+      "asn_org": "Charter Communications"
+    },
+    "phone_lookup": {
+      "line_type": "nonFixedVoip",
+      "carrier": "Bandwidth.com"
+    },
+    "accounts": {
+      "linkedin_created": "2024-11-12",
+      "github_created": "2024-04-26"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": true,
+    "camera_note": "Said the webcam was broken and joined audio-only."
+  }
+}

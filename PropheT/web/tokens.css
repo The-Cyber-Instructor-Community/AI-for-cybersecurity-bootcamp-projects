@@ -1,0 +1,38 @@
+/* Chimera Console design tokens: the "glass" palette from Darpan's design handoff (Oct 18), shared by both views
+   (glass.css for the Simple view, the top bar and the dialog; style.css for the Advanced view). Light by default,
+   dark when the system asks. */
+:root {
+  --f: "Plus Jakarta Sans", system-ui, sans-serif;
+  --fm: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --bg: oklch(0.96 0.01 250);  --surface: oklch(1 0 0);  --surface-2: oklch(0.95 0.003 260);
+  --line: oklch(0.9 0.003 260);  --line-strong: oklch(0.62 0.012 260);  --mute: oklch(0.5 0.01 260);
+  --ink: oklch(0.17 0.005 260);  --ink-2: oklch(0.46 0.008 260);
+  --accent: oklch(0.5 0.22 262);  --accent-ink: oklch(1 0 0);
+  --glass: oklch(1 0 0 / .5);  --card: oklch(1 0 0 / .55);  --card-bd: oklch(1 0 0 / .75);
+  --card-sh: 0 8px 32px oklch(0.3 0.05 260 / .12), inset 0 1px 0 oklch(1 0 0 / .9);
+  --chip: oklch(1 0 0 / .5);
+  --blob1: oklch(0.86 0.09 250 / .85); --blob2: oklch(0.89 0.07 330 / .75); --blob3: oklch(0.9 0.07 185 / .75);
+  --model-line: oklch(0.62 0.05 285);
+  --low-fg: oklch(0.40 0.12 250);  --low-bg: oklch(0.93 0.035 250);  --low-solid: oklch(0.55 0.15 250);
+  --review-fg: oklch(0.40 0.09 70); --review-bg: oklch(0.94 0.07 90); --review-solid: oklch(0.72 0.15 80);
+  --high-fg: oklch(0.40 0.16 25);  --high-bg: oklch(0.94 0.04 25);  --high-solid: oklch(0.55 0.2 25);
+  /* Dense text (evidence, notes, report, logs) sits on this near-opaque surface so it keeps 4.5:1 over the washes. */
+  --read: color-mix(in oklch, var(--surface) 88%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: oklch(0.14 0.02 260);  --surface: oklch(0.2 0.02 260);  --surface-2: oklch(0.27 0.02 260);
+    --line: oklch(0.3 0.002 260);  --line-strong: oklch(0.55 0.012 260);  --mute: oklch(0.7 0.01 260);
+    --ink: oklch(0.97 0 0);  --ink-2: oklch(0.72 0.005 260);
+    --accent: oklch(0.74 0.14 255);  --accent-ink: oklch(0.12 0 0);
+    --glass: oklch(0.14 0.02 260 / .55);  --card: oklch(1 0 0 / .07);  --card-bd: oklch(1 0 0 / .14);
+    --card-sh: 0 8px 32px oklch(0 0 0 / .35), inset 0 1px 0 oklch(1 0 0 / .12);
+    --chip: oklch(1 0 0 / .08);
+    --blob1: oklch(0.45 0.15 262 / .6); --blob2: oklch(0.42 0.12 330 / .5); --blob3: oklch(0.45 0.1 190 / .5);
+    --model-line: oklch(0.62 0.06 285);
+    --low-fg: oklch(0.82 0.09 250);  --low-bg: oklch(0.30 0.05 250);  --low-solid: oklch(0.72 0.11 250);
+    --review-fg: oklch(0.86 0.13 85); --review-bg: oklch(0.32 0.06 85); --review-solid: oklch(0.80 0.15 85);
+    --high-fg: oklch(0.82 0.13 25);  --high-bg: oklch(0.31 0.08 25);  --high-solid: oklch(0.70 0.19 25);
+    color-scheme: dark;
+  }
+}

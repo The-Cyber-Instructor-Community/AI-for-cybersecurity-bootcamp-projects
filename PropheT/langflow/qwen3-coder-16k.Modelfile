@@ -1,0 +1,8 @@
+# The agents' model for the Chimera flow: qwen3-coder:30b with its context fixed at 16K tokens.
+# The Ollama app's "Context length" setting applies to every model it loads. At 256K, this model took 45 GB and ran
+# half on the CPU (Oct 18: 129.5 s for one analyst, whose two calls used 777 and 924 tokens). At 16K it fits on the
+# 24 GB GPU, and a named model keeps the flow's setting the same whatever the app is set to.
+#   ollama create qwen3-coder-16k -f langflow\qwen3-coder-16k.Modelfile
+#   ollama ps          (after a run: PROCESSOR 100% GPU, CONTEXT 16384)
+FROM qwen3-coder:30b
+PARAMETER num_ctx 16384

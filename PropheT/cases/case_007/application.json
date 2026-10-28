@@ -1,0 +1,44 @@
+{
+  "case_id": "case_007",
+  "candidate": {
+    "name": "Sheri Robinson",
+    "emails": [
+      "sherirobinson4964@example.com"
+    ],
+    "phones": [
+      "+17045550167"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-sheri-robinson-1d42",
+    "github": "https://github.com/synth-drose856",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Phoenix",
+      "state": "AZ",
+      "country": "US"
+    },
+    "claimed_years_experience": 8
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "203.0.113.197",
+    "ip_lookup": {
+      "country": "US",
+      "asn": 14061,
+      "asn_org": "DigitalOcean, LLC"
+    },
+    "phone_lookup": {
+      "line_type": "mobile",
+      "carrier": "T-Mobile USA"
+    },
+    "accounts": {
+      "linkedin_created": "2026-09-13",
+      "github_created": "2025-09-08"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": ""
+  }
+}

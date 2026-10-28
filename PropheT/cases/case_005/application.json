@@ -1,0 +1,44 @@
+{
+  "case_id": "case_005",
+  "candidate": {
+    "name": "Yvonne Giles",
+    "emails": [
+      "jose.watson3509+careers@example.org"
+    ],
+    "phones": [
+      "+14045550187"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-yvonne-giles-4df2",
+    "github": "https://github.com/synth-ygiles997",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Chicago",
+      "state": "IL",
+      "country": "US"
+    },
+    "claimed_years_experience": 7
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "198.51.100.233",
+    "ip_lookup": {
+      "country": "US",
+      "asn": 701,
+      "asn_org": "Verizon Business"
+    },
+    "phone_lookup": {
+      "line_type": "mobile",
+      "carrier": "T-Mobile USA"
+    },
+    "accounts": {
+      "linkedin_created": "2023-10-09",
+      "github_created": "2023-03-23"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": ""
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "case_id": "case_004",
+  "candidate": {
+    "name": "John Juarez",
+    "emails": [
+      "johnjuarez9570@example.org"
+    ],
+    "phones": [
+      "+18015550135"
+    ],
+    "linkedin": "https://www.linkedin.com/in/synth-john-juarez-d3cd",
+    "github": "https://github.com/synth-jjuarez343",
+    "telegram": "",
+    "claimed_location": {
+      "city": "Seattle",
+      "state": "WA",
+      "country": "US"
+    },
+    "claimed_years_experience": 4
+  },
+  "application": {
+    "submitted_at": "2026-10-13",
+    "ip": "198.51.100.203",
+    "ip_lookup": {
+      "country": "NL",
+      "asn": 9009,
+      "asn_org": "M247 Europe SRL"
+    },
+    "phone_lookup": {
+      "line_type": "mobile",
+      "carrier": "T-Mobile USA"
+    },
+    "accounts": {
+      "linkedin_created": "2021-11-08",
+      "github_created": "2020-10-04"
+    }
+  },
+  "interview": {
+    "recording": null,
+    "liveness_step": null,
+    "camera_refused": false,
+    "camera_note": ""
+  }
+}
