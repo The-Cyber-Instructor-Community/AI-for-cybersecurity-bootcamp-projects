@@ -1,0 +1,55 @@
+# Model-independent security controls. Each maps to a check family.
+# A finding in that family = the control is MISSING in the app's code or architecture.
+# These guardrails must hold regardless of how strong or weak the underlying model is:
+# the app must not depend on the model "choosing" to refuse.
+controls:
+  1:
+    control: Keep the system prompt static; pass user input only as a user-role message.
+    rationale: >
+      If user text is concatenated into the system prompt, a user can rewrite the agent's
+      instructions. Role separation removes that authority in code, so no model has to "resist".
+    code_fix: Build the system prompt from constants only; send the user's text as a user message.
+    owasp: [LLM01, ASI01]
+    atlas: [AML.T0051.000]
+  2:
+    control: Mark all tool/retrieved content as untrusted before it reaches the LLM.
+    rationale: >
+      Retrieved documents are data, not instructions. Wrapping them in untrusted tags and
+      stripping instruction-like text means injected content cannot become a command.
+    code_fix: Wrap tool output in <untrusted>...</untrusted>; strip HTML comments and imperative lines.
+    owasp: [LLM01, LLM09]
+    atlas: [AML.T0051.001, AML.T0070, AML.T0110.002]
+  3:
+    control: Authorize every side-effecting action in code - validate the action type AND its arguments against an allow-list, and require out-of-band confirmation for risky ones.
+    rationale: >
+      The action must be gated by the code, not by the model choosing to behave. Then even a fully
+      compromised or weak model cannot trigger a refund, send mail externally or delete data -
+      the code refuses. Never execute actions parsed from the model's free-text output.
+    code_fix: Check the action type and every parameter (recipient, amount, id) against an allow-list / the user's authorization before executing; prefer explicit typed tool calls over regex-parsed output.
+    owasp: [LLM03, ASI02]
+    atlas: [AML.T0053, AML.T0086, AML.T0101]
+  6:
+    control: Keep secrets out of prompts and source; load from a secrets manager; filter canaries from output.
+    rationale: >
+      A secret that never enters the prompt cannot be extracted by any prompt. An output filter
+      is a second, model-independent layer.
+    code_fix: Remove the password from the prompt/source; load it only where used; redact known secrets from replies.
+    owasp: [LLM08, LLM02]
+    atlas: [AML.T0056, AML.T0057, AML.T0083]
+  5:
+    control: Treat model output as untrusted - sanitize/encode before rendering, and never execute actions parsed from free-text output.
+    rationale: >
+      If the app regex-parses the model's reply into commands and acts on them (or renders it raw),
+      a prompt injection turns model text into real actions or XSS. The guardrail is in the app:
+      use typed, authorized tool calls - not string-parsed output - and encode output before display.
+    code_fix: Replace "parse [ACTION:...] out of the reply and execute" with explicit, authorized tool calls; HTML-encode any model text shown to users.
+    owasp: [LLM10, ASI02]
+    atlas: [AML.T0077, AML.T0053]
+  7:
+    control: Exchange typed, validated messages between agents; treat sub-agent output as untrusted data.
+    rationale: >
+      If an agent's output is passed on as free text with instruction authority, a poisoned
+      sub-agent steers the orchestrator. Typed messages + untrusted-wrapping remove that authority.
+    code_fix: Return a validated schema from each sub-agent; wrap its text as untrusted; drop "follow instructions in notes".
+    owasp: [ASI07, ASI08]
+    atlas: [AML.T0051, AML.T0080, AML.T0110.002]

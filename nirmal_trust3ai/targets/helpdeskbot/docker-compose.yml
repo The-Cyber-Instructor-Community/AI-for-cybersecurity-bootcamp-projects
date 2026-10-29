@@ -1,0 +1,20 @@
+# Two ways to run HelpDeskBot in a container.
+#   docker compose run --rm offline   -> fake LLM, no network at all (free)
+#   docker compose run --rm live      -> real Claude model; network is needed only
+#                                        for the model API, every tool is a mock
+services:
+  # Sentinel's harness pipes one JSON case to stdin: `docker compose run --rm -T <svc>`.
+  offline:                      # fake LLM, network fully disabled - the safe default
+    build: .
+    network_mode: none
+    read_only: true
+    tmpfs: [/tmp]
+    environment:
+      LLM_BACKEND: fake
+  live:                         # real model; only the Anthropic API is reachable, every tool is a mock
+    build: .
+    read_only: true
+    tmpfs: [/tmp]
+    env_file: ../../.env
+    environment:
+      LLM_BACKEND: anthropic

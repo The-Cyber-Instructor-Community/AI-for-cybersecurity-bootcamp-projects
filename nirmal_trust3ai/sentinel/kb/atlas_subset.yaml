@@ -1,0 +1,21 @@
+# MITRE ATLAS techniques used by the core check families.
+# Names and tactics copied from the official atlas-data release v2026.09 (15 Sep 2026),
+# https://github.com/mitre-atlas/atlas-data (dist/ATLAS-latest.yaml).
+# ATLAS now uses date-based versions (vYYYY.MM); none of these IDs changed from v5.6.0.
+source: MITRE ATLAS v2026.09
+items:
+  - {id: AML.T0051,     name: LLM Prompt Injection,                     tactics: [Execution]}
+  - {id: AML.T0051.000, name: "LLM Prompt Injection: Direct",            tactics: [Execution]}
+  - {id: AML.T0051.001, name: "LLM Prompt Injection: Indirect",          tactics: [Execution]}
+  - {id: AML.T0068,     name: LLM Prompt Obfuscation,                   tactics: [Defense Evasion]}
+  - {id: AML.T0070,     name: RAG Poisoning,                            tactics: [Persistence]}
+  - {id: AML.T0071,     name: False RAG Entry Injection,                tactics: [Defense Evasion]}
+  - {id: AML.T0110.002, name: "AI Agent Tool Poisoning: Runtime Response", tactics: [Persistence]}   # new in 2026
+  - {id: AML.T0053,     name: AI Agent Tool Invocation,                 tactics: [Execution, Lateral Movement, Privilege Escalation]}
+  - {id: AML.T0101,     name: Data Destruction via AI Agent Tool Invocation, tactics: [Impact]}
+  - {id: AML.T0056,     name: Extract LLM System Prompt,                tactics: [Exfiltration]}
+  - {id: AML.T0057,     name: LLM Data Leakage,                         tactics: [Exfiltration]}
+  - {id: AML.T0083,     name: Credentials from AI Agent Configuration,  tactics: [Credential Access]}
+  - {id: AML.T0080,     name: AI Agent Context Poisoning,               tactics: [Persistence]}
+  - {id: AML.T0086,     name: Exfiltration via AI Agent Tool Invocation, tactics: [Exfiltration]}
+  - {id: AML.T0077,     name: LLM Trusted Output Components Manipulation, tactics: [Defense Evasion]}

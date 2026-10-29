@@ -1,0 +1,150 @@
+# Sentinel static rules - one or two per core check family.
+# metadata.family links each rule to sentinel/kb/families.yaml (OWASP + ATLAS tags come from there).
+rules:
+  # ---------------------------------------------------------------- family 1
+  - id: f1-user-input-in-system-prompt
+    message: User-controlled '$ARG' is pasted into a system prompt; a user can override the instructions.
+    severity: ERROR
+    languages: [python]
+    metadata: {family: 1}
+    patterns:
+      - pattern-inside: |
+          def $FUNC(..., $ARG, ...):
+            ...
+      - metavariable-regex: {metavariable: $FUNC, regex: (?i).*(prompt|system|instruction).*}
+      - metavariable-regex: {metavariable: $ARG, regex: (?i).*(user|message|query|question|request|input).*}
+      - pattern: f"...{$ARG}..."
+
+  # ---------------------------------------------------------------- family 2
+  - id: f2-tool-returns-raw-content
+    message: Tool '$FUNC' returns outside content to the LLM without marking it untrusted (indirect injection).
+    severity: ERROR
+    languages: [python]
+    metadata: {family: 2}
+    patterns:
+      - pattern-inside: |
+          def $FUNC(...):
+            ...
+      - metavariable-regex: {metavariable: $FUNC, regex: (?i).*(search|retriev|fetch|browse|lookup|get_doc|read_url|scrape).*}
+      - pattern-either:
+          - pattern: return <... $X.read_text() ...>
+          - pattern: return <... $X.read() ...>
+          - pattern: return <... $R.text ...>
+          - pattern: return <... $R.content ...>
+      - pattern-not: return <... "<untrusted>" ...>
+      - pattern-not-inside: "lambda $P: ..."          # e.g. a sort key, not text sent to the LLM
+      - pattern-not-regex: '"error"'                  # error-handling returns are not the tool's content
+
+  # ---------------------------------------------------------------- family 3
+  - id: f3-side-effect-tool-without-guard
+    message: Tool '$FUNC' has outside effects but no allow-list, approval or confirmation check.
+    severity: WARNING
+    languages: [python]
+    metadata: {family: 3}
+    patterns:
+      - pattern: |
+          def $FUNC(...):
+            ...
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: (?i)^(send|delete|remove|transfer|pay|post|publish|drop|execute|run_shell|write|upload)_.*
+      - pattern-not-regex: (?i)(allow|approv|confirm|permit|whitelist|ALLOWED)
+
+  # ---------------------------------------------------------------- family 6
+  - id: f6-secret-in-prompt
+    message: Secret-looking value '$S' is pasted into a prompt / system message; anyone who extracts the prompt gets it.
+    severity: ERROR
+    languages: [python]
+    metadata: {family: 6}
+    patterns:
+      - metavariable-regex: {metavariable: $S, regex: (?i).*(password|secret|token|api_?key|credential).*}
+      - pattern-either:
+          - patterns:                                   # inside a prompt-building function
+              - pattern: f"...{$S}..."
+              - pattern-inside: |
+                  def $FN(...):
+                    ...
+              - metavariable-regex: {metavariable: $FN, regex: (?i).*(prompt|system|instruction|persona|preamble|template).*}
+          - patterns:                                   # assigned to a prompt-named variable
+              - pattern: $PROMPT = f"...{$S}..."
+              - metavariable-regex: {metavariable: $PROMPT, regex: (?i).*(prompt|system|instruction|persona|preamble|context|message).*}
+  - id: f6-hardcoded-secret
+    message: Secret '$NAME' appears hard-coded in source (high-entropy literal).
+    severity: WARNING
+    languages: [python]
+    metadata: {family: 6}
+    patterns:
+      - pattern: $NAME = "$VALUE"
+      - metavariable-regex: {metavariable: $NAME, regex: (?i).*(password|secret|token|api_?key).*}
+      # VALUE must look like a secret: >=12 chars of secret-ish alphabet (no dots/spaces/URLs/config-paths),
+      # and contain both a letter and a digit (excludes ENV_VAR_NAMES, field names, URLs, dotted keys).
+      # (Semgrep metavariable-regex uses re.match - anchored at start - so "contains" needs a leading .*)
+      - metavariable-regex: {metavariable: $VALUE, regex: "^[A-Za-z0-9_+/=-]{12,}$"}
+      - metavariable-regex: {metavariable: $VALUE, regex: ".*[0-9]"}
+      - metavariable-regex: {metavariable: $VALUE, regex: ".*[A-Za-z]"}
+
+  # ---------------------------------------------------------------- family 7
+  - id: f7-prompt-grants-agent-authority
+    message: Prompt tells the model to obey another agent's output - sub-agent text becomes instructions.
+    severity: ERROR
+    languages: [python]
+    metadata: {family: 7}
+    pattern-regex: (?i)(follow|obey|execute)\s+(any|all|the)?\s*(instructions|orders|commands)\s+(in|from)\b
+  - id: f7-subagent-output-unvalidated
+    message: Sub-agent output is passed on as free text - no schema check and not marked untrusted.
+    severity: WARNING
+    languages: [python]
+    metadata: {family: 7}
+    pattern-either:
+      - pattern: return self.$AGENT.run(...)
+      - patterns:
+          - pattern-inside: |
+              $OUT = self.$AGENT.run(...)
+              ...
+          - pattern: return f"...{$OUT}..."
+
+  # ---------------------------------------------------------------- family 5
+  # Improper output handling: the app parses the model's free-text reply (regex) and acts on it.
+  # A prompt injection then turns model text into real actions. Matches e.g. an
+  # ACTION_PATTERN.finditer(assistant_message) pattern that executes parsed commands.
+  - id: f5-model-output-parsed
+    message: Model output is parsed with a regex; if the result drives actions this is excessive agency / improper output handling.
+    severity: ERROR
+    languages: [python]
+    metadata: {family: 5}
+    patterns:
+      - pattern-either:
+          - pattern: $RE.finditer($MSG)
+          - pattern: $RE.findall($MSG)
+          - pattern: $RE.search($MSG)
+          - pattern: $RE.match($MSG)
+      - metavariable-regex:
+          metavariable: $MSG
+          regex: (?i).*(assistant|completion|llm[_ ]?(response|out|output|reply)|model[_ ]?(output|response|reply)|generation|generated|ai[_ ]?(response|reply)|chat[_ ]?response|bot[_ ]?reply).*
+  - id: f5-model-output-rendered-raw
+    message: Model output is returned/rendered without sanitising; untrusted output can carry injected markup or instructions.
+    severity: WARNING
+    languages: [python]
+    metadata: {family: 5}
+    patterns:
+      - pattern-either:
+          - pattern: return HTMLResponse($X)
+          - pattern: return render_template_string($X, ...)
+      - metavariable-regex:
+          metavariable: $X
+          regex: (?i).*(assistant|completion|llm[_ ]?(response|out|output|reply)|model[_ ]?(output|response|reply)|generation|generated|ai[_ ]?(response|reply)|chat[_ ]?response|bot[_ ]?reply).*
+
+  # ---------------------------------------------------------------- family 3 (generalised)
+  # Excessive agency: a side effect executed inside a loop over regex matches of model output.
+  - id: f3-action-from-model-output
+    message: Actions are taken in a loop over content parsed from model output - excessive agency with no out-of-band authorisation.
+    severity: ERROR
+    languages: [python]
+    metadata: {family: 3}
+    patterns:
+      - pattern: |
+          for $M in $RE.finditer($MSG):
+            ...
+      - metavariable-regex:
+          metavariable: $MSG
+          regex: (?i).*(assistant|completion|llm[_ ]?(response|out|output|reply)|model[_ ]?(output|response|reply)|generation|generated|ai[_ ]?(response|reply)|chat[_ ]?response|bot[_ ]?reply).*

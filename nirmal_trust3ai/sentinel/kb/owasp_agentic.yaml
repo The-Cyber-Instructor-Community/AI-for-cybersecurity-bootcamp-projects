@@ -1,0 +1,13 @@
+# OWASP Top 10 for Agentic Applications (2026 edition, published Dec 2025). Still the latest.
+source: OWASP Top 10 for Agentic Applications 2026
+items:
+  - {id: ASI01, name: Agent Goal Hijack, core: true}
+  - {id: ASI02, name: Tool Misuse and Exploitation, core: true}
+  - {id: ASI03, name: Identity and Privilege Abuse, core: false}
+  - {id: ASI04, name: Agentic Supply Chain Vulnerabilities, core: false}
+  - {id: ASI05, name: Unexpected Code Execution (RCE), core: false}
+  - {id: ASI06, name: Memory and Context Poisoning, core: false}
+  - {id: ASI07, name: Insecure Inter-Agent Communication, core: true}
+  - {id: ASI08, name: Cascading Failures, core: true}
+  - {id: ASI09, name: Human-Agent Trust Exploitation, core: false}
+  - {id: ASI10, name: Rogue Agents, core: false}
