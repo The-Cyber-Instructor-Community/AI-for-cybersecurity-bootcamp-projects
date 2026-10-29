@@ -1,0 +1,333 @@
+/* Chimera Console, Simple view in the "glass" style (design handoff turn 4, Oct 18), plus the shared top bar, the
+   glass dialog and the score dial. Translucent cards over soft colour washes. Every class here starts with "g". The
+   palette is in tokens.css, shared with the Advanced view (style.css), which uses the same washes and glass panes. */
+
+/* ---- page: Simple scrolls as a page under a sticky bar; Advanced keeps its fixed panes ---------------------------- */
+body[data-view="simple"] { display: block; height: auto; min-height: 100%; background: var(--bg); color: var(--ink);
+  font: 400 17px/1.5 var(--f); }
+body[data-view="simple"] .advanced, body[data-view="advanced"] #simple, body[data-view="advanced"] .gnav { display: none; }
+body[data-view="advanced"] .advanced { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+body[data-view="advanced"] .gbar-in { width: calc(100% - 32px); }   /* full width, lined up with the case list */
+
+.gbackdrop { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(640px 440px at 12% 8%, var(--blob1), transparent 70%),
+              radial-gradient(760px 520px at 88% 32%, var(--blob2), transparent 70%),
+              radial-gradient(640px 520px at 45% 105%, var(--blob3), transparent 70%); }
+#simple { position: relative; z-index: 1; }
+
+/* ---- glass surfaces (blur only where the browser supports it) ----------------------------------------------------- */
+.gcard { background: var(--card); border: 1px solid var(--card-bd); box-shadow: var(--card-sh); }
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .gcard { backdrop-filter: blur(24px) saturate(1.4); -webkit-backdrop-filter: blur(24px) saturate(1.4); }
+  .gbar { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .gcard, .gbar { background: color-mix(in oklch, var(--surface) 92%, transparent); }
+}
+
+/* ---- top bar (both views) ------------------------------------------------------------------------------------------ */
+.gbar { position: sticky; top: 0; z-index: 10; flex: none; height: 52px; display: flex; justify-content: center;
+  background: var(--glass); border-bottom: 1px solid var(--line); color: var(--ink); font: 500 14px var(--f); }
+.gbar-in { width: min(1080px, 100% - 32px); display: flex; align-items: center; gap: 36px; }
+.gbrand { font: 600 16px var(--f); letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+.gnav { display: flex; gap: 36px; }
+.gnav a { display: inline-flex; align-items: center; height: 44px; color: var(--ink-2); text-decoration: none; }
+.gnav a[aria-current="page"] { color: var(--ink); }
+.gstatus { margin-left: auto; display: flex; align-items: center; gap: 10px; color: var(--ink-2); white-space: nowrap; }
+.gstatus i { display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--low-solid); }
+.gstatus.warn i { border-radius: 2px; background: var(--review-solid); }
+.gstatus.bad i { background: var(--high-solid); }
+.gswitch { display: flex; gap: 2px; padding: 3px; border-radius: 980px; background: var(--surface-2); }
+.gswitch button, .gtabs a, .gtabs button { position: relative; border: 0; border-radius: 980px; background: transparent; color: var(--ink-2);
+  font: 600 13px var(--f); padding: 4px 14px; cursor: pointer; text-decoration: none; transition: opacity .2s ease; }
+.gswitch button::after, .gtabs a::after, .gtabs button::after, .gpill::after { content: ""; position: absolute; inset: -8px -2px; } /* 44px hit area */
+.gswitch button::after { inset: -10px -2px; }   /* the switch's segments are shorter (13px text) */
+.gswitch button[aria-pressed="true"], .gtabs a[aria-current="page"], .gtabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+
+/* ---- shared controls ----------------------------------------------------------------------------------------------- */
+.gbtn, .gtextbtn, .gpill, .gtile, .glink { cursor: pointer; transition: opacity .2s ease; font-family: var(--f); }
+.gbtn:hover, .gtextbtn:hover, .gpill:hover, .gtile:hover, .glink:hover, .gswitch button:hover, .gtabs a:hover { opacity: .88; }
+.gbar :focus-visible, #simple :focus-visible, .gdlg :focus-visible, .gtoasts :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* headings take the focus when a new page opens (so screen readers announce it); they are not controls, so no ring */
+#simple [tabindex="-1"]:focus { outline: none; }
+/* small text links keep a 44px tall hit area without changing the layout */
+.gbrand, .geyebrow, .glink { position: relative; }
+.gbrand::after, .geyebrow::after, .glink::after { content: ""; position: absolute; inset: -13px -6px; }
+/* read by screen readers, not shown */
+.gsr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.gbtn { height: 44px; padding: 0 22px; border: 0; border-radius: 980px; background: var(--accent); color: var(--accent-ink);
+  font-weight: 600; font-size: 16px; white-space: nowrap; }
+.gbtn.ghost { background: var(--chip); color: var(--ink); border: 1px solid var(--card-bd); }
+/* disabled: a neutral fill rather than a faded accent, which reads as muddy over the dark washes */
+.gbtn:disabled { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line); cursor: not-allowed; }
+.gbtn:disabled:hover { opacity: 1; }
+.gtextbtn { height: 44px; padding: 0 6px; border: 0; background: transparent; color: var(--accent); font-weight: 500;
+  font-size: 16px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.gtextbtn svg { fill: none; stroke: currentColor; stroke-width: 2; }
+.glink { border: 0; padding: 0; background: none; color: var(--accent); font: inherit; font-weight: 600; text-decoration: underline;
+  text-underline-offset: 3px; }
+
+/* ---- page column and headings -------------------------------------------------------------------------------------- */
+.gwrap { width: min(1080px, 100% - 32px); margin: 0 auto; padding: 32px 0 56px; display: flex; flex-direction: column; gap: 22px; }
+.ghead-row { display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+.ghead-row > div:first-child { flex: 1 1 320px; min-width: 0; }   /* wraps the actions below the name on narrow screens */
+.gactions { display: flex; gap: 10px; align-items: center; }
+.gactions:empty { display: none; }   /* no Recheck yet (not checked, or checking): no empty row on a phone */
+#simple code { white-space: nowrap; }
+.geyebrow { display: inline-block; margin-bottom: 12px; font: 500 15px var(--f); color: var(--accent); text-decoration: none; }
+.gh1 { margin: 0; font: 700 56px/1.05 var(--f); letter-spacing: -.03em; overflow-wrap: break-word; }
+.gsub { margin: 10px 0 0; font: 400 24px/1.3 var(--f); color: var(--ink-2); text-wrap: pretty; }
+.gsub.small { font-size: 21px; }
+.gnote { margin: 0; font: 400 16px/1.5 var(--f); color: var(--ink-2); }
+
+/* ---- cases overview -------------------------------------------------------------------------------------------------- */
+.gtiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.gtile { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; min-width: 0; min-height: 176px; padding: 26px 28px;
+  border-radius: 24px; text-align: left; color: inherit; font: inherit; text-decoration: none; }
+.gband, .glabel { display: inline-flex; align-items: center; gap: 7px; font: 600 13px var(--f); letter-spacing: .02em; }
+.gband i, .glabel i, .grow-h i { display: block; width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.gtile-row { display: flex; align-items: flex-end; gap: 12px; }
+.gtile-main { flex: 1; min-width: 0; }
+.gtile-name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden;
+  font: 600 24px/1.15 var(--f); letter-spacing: -.01em; overflow-wrap: anywhere; }   /* a very long name stops at 3 lines */
+/* two lines kept for the reason, so names in a row of tiles line up */
+.gtile-why { display: block; min-height: 2.8em; margin-top: 6px; font: 400 15px/1.4 var(--f); color: var(--ink-2); text-wrap: pretty; }
+.gtile-score { font: 700 44px/1 var(--f); letter-spacing: -.03em; font-feature-settings: "tnum"; }
+.grows { display: flex; flex-direction: column; gap: 12px; }
+/* the label lines up with the first row of names when the names wrap */
+.grow { display: flex; align-items: flex-start; gap: 20px; padding: 18px 28px; border-radius: 20px; }
+.grow-h { width: 150px; min-height: 33px; flex: none; display: inline-flex; align-items: center; gap: 8px; font: 600 15px var(--f); }
+.gempty { align-items: center; }
+.gpills { display: flex; flex-wrap: wrap; gap: 10px; }
+/* radius 17px: a pill on one line (33px tall), a rounded box when a very long name wraps */
+.gpill { position: relative; max-width: 100%; padding: 6px 14px; border-radius: 17px; background: var(--chip); border: 1px solid var(--card-bd);
+  color: var(--ink); font: 500 15px var(--f); text-decoration: none; overflow-wrap: anywhere; }
+.gempty .gnote { flex: 1; min-width: 0; }
+
+/* loading: grey blocks in the shape of the page, so nothing jumps when the data arrives */
+.gskel { display: block; max-width: 100%; border-radius: 8px; background: color-mix(in oklch, var(--ink-2) 24%, transparent);
+  animation: gpulse 1.4s ease-in-out infinite; }
+.gskel-gap { margin-top: 10px; }
+.gverdict-main .gskel + .gskel { margin-top: -4px; }
+.gload { cursor: default; }
+.gload:hover { opacity: 1; }
+.gload .gdial-in { background: var(--surface); }
+
+/* band and strength colours */
+.high { --c-fg: var(--high-fg); --c-solid: var(--high-solid); --c-bg: var(--high-bg); }
+.review, .moderate { --c-fg: var(--review-fg); --c-solid: var(--review-solid); --c-bg: var(--review-bg); }
+.low, .weak { --c-fg: var(--low-fg); --c-solid: var(--low-solid); --c-bg: var(--low-bg); }
+.strong { --c-fg: var(--high-fg); --c-solid: var(--high-solid); --c-bg: var(--high-bg); }
+.none, .wait { --c-fg: var(--ink-2); --c-solid: transparent; --c-bg: var(--chip); }
+.gband, .glabel, .grow-h { color: var(--c-fg); }
+.gband i, .glabel i, .grow-h i { background: var(--c-solid); }
+.none i { border: 1.5px solid var(--line-strong); }
+
+/* ---- case summary -------------------------------------------------------------------------------------------------- */
+.gtabs { align-self: flex-start; display: flex; gap: 2px; padding: 3px; border-radius: 980px; background: var(--surface-2); }
+.gtabs a { font-size: 14px; padding: 6px 18px; }
+.gverdict { display: flex; align-items: center; gap: 48px; padding: 28px 48px; border-radius: 28px; }
+.gverdict-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.gword { font: 700 60px/1 var(--f); letter-spacing: -.03em; color: var(--c-fg); }
+.gword.none { color: var(--ink); }
+.gheadline { margin: 0; max-width: 26ch; font: 400 26px/1.3 var(--f); color: var(--ink-2); text-wrap: pretty; }
+.gsmall { margin: 0; font: 400 15px var(--f); color: var(--ink-2); }
+.gerror { margin: 0; font: 600 16px/1.45 var(--f); color: var(--high-fg); }
+.gdial { flex: none; width: 168px; height: 168px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: conic-gradient(var(--c-solid) var(--deg, 0deg), var(--surface-2) 0); }
+.gdial.none { background: var(--surface-2); }
+.gdial-in { width: 136px; height: 136px; border-radius: 50%; background: var(--surface); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; }
+.gdial-n { font: 700 56px/1 var(--f); letter-spacing: -.03em; font-feature-settings: "tnum"; }
+.gdial-of { margin-top: 4px; font: 500 14px var(--f); color: var(--ink-2); }
+.gdial.sm { width: 112px; height: 112px; }
+.gdial.sm .gdial-in { width: 88px; height: 88px; }
+.gdial.sm .gdial-n { font-size: 34px; }
+.gdial.sm .gdial-of { margin-top: 2px; font-size: 12px; }
+.gsteps { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.gsteps li { display: flex; align-items: center; gap: 12px; font: 400 17px var(--f); }
+.gsteps i { display: block; flex: none; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--line-strong); }
+.gsteps .gstep-l { width: 200px; }
+.gsteps .gstep-w { font: 600 15px var(--f); color: var(--ink-2); white-space: nowrap; }
+.gsteps .done i { background: var(--low-solid); border-color: var(--low-solid); }
+.gsteps .active i { background: var(--accent); border-color: var(--accent); }
+.gsteps .skip i { border-color: var(--mute); }
+.gpulse { animation: gpulse 1.4s ease-in-out infinite; }
+@keyframes gpulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .gpulse, .gskel { animation: none; } }
+
+.greasons { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.greasons.two-by-two { grid-template-columns: repeat(auto-fit, minmax(max(300px, 40%), 1fr)); }   /* four cards: 2 x 2, not 3 + 1 */
+.greason { display: flex; flex-direction: column; gap: 12px; padding: 26px 28px; border-radius: 24px; }
+.greason p { margin: 0; font: 500 19px/1.4 var(--f); letter-spacing: -.005em; text-wrap: pretty; }
+
+.greport { display: flex; gap: 40px; align-items: flex-start; padding: 28px 32px; border-radius: 24px; }
+.greport-h { width: 200px; flex: none; display: flex; flex-direction: column; gap: 8px; }
+.greport-h b { font: 600 22px var(--f); letter-spacing: -.01em; }
+.gtag { align-self: flex-start; padding: 3px 8px; border: 1px dashed var(--model-line); border-radius: 980px; color: var(--ink-2);
+  font: 600 11px var(--fm); letter-spacing: .06em; }
+.greport-b { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; font: 400 18px/1.45 var(--f); }
+.greport-b p { margin: 0; }
+.greport-b .ok { color: var(--low-fg); font-weight: 600; }
+.greport-b .bad { color: var(--high-fg); font-weight: 600; }
+.greport-b .gmock { align-self: flex-start; padding: 8px 14px; border-radius: 14px; color: var(--review-fg); background: var(--review-bg);
+  border: 1px solid color-mix(in oklch, var(--review-solid) 40%, transparent); font-size: 16px; font-weight: 500; }
+.gadv { margin: 0; font: 400 16px var(--f); color: var(--ink-2); }
+
+/* ---- interview ----------------------------------------------------------------------------------------------------- */
+.ginterview { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.gpanel { display: flex; flex-direction: column; gap: 18px; padding: 26px 28px; border-radius: 24px; }
+.gpanel h2 { margin: 0; font: 600 22px var(--f); letter-spacing: -.01em; }
+.gcheck { display: flex; align-items: center; gap: 12px; min-height: 44px; font: 400 17px var(--f); cursor: pointer; }
+.gcheck input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--accent); cursor: pointer; }   /* flex: none, or a long label squeezes the box */
+.gstrip { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; background: var(--chip);
+  border: 1px solid var(--card-bd); }
+.gstrip i { display: block; flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--line-strong); }
+.gstrip.rec i { background: var(--high-solid); }
+.gstrip.saved i { background: var(--low-solid); }
+.gstrip b { font: 600 18px var(--f); }
+.gstrip .gtimer { margin-left: auto; font: 600 18px var(--fm); font-feature-settings: "tnum"; text-align: right; }
+.gstrip .gchunks { display: block; font: 400 13px var(--f); color: var(--ink-2); white-space: nowrap; }   /* under the timer */
+.gbtns { display: flex; flex-wrap: wrap; gap: 8px; }
+.ghint { margin: 0; font: 400 15px/1.45 var(--f); color: var(--ink-2); }
+/* a meeting recording added as files (Interview tab) */
+.gupload { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px solid var(--line); }
+.gfile { display: flex; flex-direction: column; gap: 6px; font: 500 15px var(--f); color: var(--ink); }
+.gfile input { font: 400 14px var(--f); color: var(--ink-2); max-width: 100%; }
+/* the browser's "Choose file" button, as a glass pill with a 44px hit area */
+.gfile input, .gfield input[type="file"] { min-height: 44px; cursor: pointer; }
+.gfile input::file-selector-button, .gfield input[type="file"]::file-selector-button { height: 36px; margin: 4px 12px 4px 0; padding: 0 16px;
+  border: 1px solid var(--card-bd); border-radius: 980px; background: var(--chip); color: var(--ink); font: 600 14px var(--f);
+  cursor: pointer; transition: opacity .2s ease; }
+.gfile input:hover::file-selector-button, .gfield input[type="file"]:hover::file-selector-button { opacity: .88; }
+.gdlg .gfield input[type="file"]::file-selector-button { background: var(--surface-2); border-color: var(--line); }
+.gfile input:disabled { cursor: not-allowed; opacity: .55; }                  /* until the consent box is ticked */
+.gfile input:disabled::file-selector-button { cursor: not-allowed; }
+.gnowrap { white-space: nowrap; }
+.gread { align-self: flex-start; padding: 4px 14px; border-radius: 12px; background: var(--c-bg); color: var(--c-fg); font: 700 34px var(--f);
+  letter-spacing: -.02em; }
+/* The meter is plain grey until a log row says which cut-off the live check used (simple.js sets --cut from it and
+   adds .known); then the part below the cut-off is blue, the part above red, with a tick at the cut-off itself. */
+.gmeter { position: relative; height: 12px; border-radius: 6px; background: var(--surface-2); }
+.gmeter.known { background: linear-gradient(90deg, var(--low-solid) 0 var(--cut), var(--high-solid) var(--cut) 100%); opacity: .9; }
+.gmeter.known:not(.reading) { opacity: .4; }   /* the scale is known but there is no reading yet (checking, paused) */
+.gmeter i { position: absolute; top: -6px; width: 4px; height: 24px; margin-left: -2px; border-radius: 2px; background: var(--ink); }
+.gmeter b { position: absolute; top: 14px; left: var(--cut); width: 2px; height: 8px; margin-left: -1px; background: var(--ink-2); }
+.gmeter-l { display: flex; justify-content: space-between; margin-top: -8px; font: 400 14px var(--f); color: var(--ink-2); }
+.gsay { margin: 0; font: 400 17px/1.5 var(--f); text-wrap: pretty; }
+
+/* ---- New case dialog ----------------------------------------------------------------------------------------------- */
+.gdlg { width: min(560px, 100vw - 32px); padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+  color: var(--ink); box-shadow: 0 12px 40px rgba(0, 0, 0, .35); font: 400 16px/1.45 var(--f); }
+.gdlg::backdrop { background: rgba(0, 0, 0, .6); }
+@supports (backdrop-filter: blur(1px)) { .gdlg::backdrop { backdrop-filter: blur(4px); } }
+.gdlg h2 { margin: 0; padding: 18px 24px 2px; font: 700 22px var(--f); }
+.gdlg-sub { margin: 0; padding: 0 24px 12px; border-bottom: 1px solid var(--line); font: 400 15px var(--f); color: var(--ink-2); }
+.gdlg-b { padding: 12px 24px; display: flex; flex-direction: column; gap: 14px; max-height: min(70vh, 640px); overflow-y: auto; }
+.gfield { display: flex; flex-direction: column; gap: 6px; font: 600 15px var(--f); color: var(--ink-2); }
+.gfield input, .gfield select { height: 42px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg);
+  color: var(--ink); font: 400 16px var(--f); }
+.gfield.err input { border: 2px solid var(--high-solid); }
+.gdlg .gfield.err input:focus-visible { outline-color: var(--high-solid); }   /* one red frame, not red plus blue */
+.gfield .gerr { font: 600 14px var(--f); color: var(--high-fg); }
+.gfield .gerr:empty { display: none; }
+.gdrop { height: 56px; display: flex; align-items: center; justify-content: center; padding: 0 12px; text-align: center;
+  border: 1.5px dashed var(--line-strong); border-radius: 8px; color: var(--ink-2); cursor: pointer; }
+.gdrop.over { border-color: var(--accent); color: var(--accent); }
+.gmore-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0;
+  background: none; color: var(--accent); font: 600 15px var(--f); cursor: pointer; }
+.gmore-btn span { color: var(--ink-2); font-weight: 400; }
+.gmore { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.gmore[hidden] { display: none; }
+.gmore h3 { grid-column: 1 / -1; margin: 6px 0 0; font: 600 13px var(--f); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-2); }
+.gmore .gcheck, .gmore .gwide { grid-column: 1 / -1; }   /* consents and the ID upload get the full width */
+.gmore .gcheck { font-size: 16px; color: var(--ink); }
+.gdlg-f { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 10px; padding: 14px 24px; border-top: 1px solid var(--line); }
+.gdlg-err { flex: 1 1 100%; margin: 0; font: 600 14px/1.4 var(--f); color: var(--high-fg); }
+.gdlg-err:empty { display: none; }
+
+/* ---- the most suspicious moments as pictures (case summary, Interview tab; Oct 25) -------------------------------- */
+.gframes-set { display: flex; flex-direction: column; gap: 10px; }
+.gframes-set h3, .glive-frames h3 { margin: 4px 0 0; font: 600 13px var(--f); letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-2); }
+.gframes-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.gframe { margin: 0; width: 120px; display: flex; flex-direction: column; gap: 6px; }
+.gframe a { display: block; border-radius: 14px; overflow: hidden; border: 1px solid var(--card-bd); background: var(--surface-2);
+  transition: opacity .2s ease; }
+.gframe a:hover { opacity: .88; }
+.gframe img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
+.gframe figcaption { display: flex; justify-content: space-between; gap: 6px; font: 400 14px var(--f); color: var(--ink-2);
+  font-feature-settings: "tnum"; }
+.gframe figcaption b { color: var(--ink); font-weight: 600; }
+.glive-frames { display: flex; flex-direction: column; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.glive-frames:empty { display: none; }
+.glive-frames .gframe { width: 88px; }
+
+/* ---- watchlist admin (#/watchlist; Oct 25) ------------------------------------------------------------------------- */
+a.gbtn { display: inline-flex; align-items: center; text-decoration: none; }
+.gwl-tag { display: inline-block; margin-bottom: 12px; }
+.gwl-banner { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 24px; padding: 18px 24px; border-radius: 20px;
+  border-color: color-mix(in oklch, var(--review-solid) 55%, transparent); }
+.gwl-banner p { flex: 1 1 320px; margin: 0; font: 500 17px/1.45 var(--f); color: var(--review-fg); }
+.gwl-list { display: flex; flex-direction: column; gap: 16px; padding: 22px 24px; border-radius: 24px; }
+.gwl-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.gwl-search { flex: 1 1 280px; min-width: 0; height: 44px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 980px;
+  background: var(--bg); color: var(--ink); font: 400 16px var(--f); }
+/* position: the screen-reader labels in the rows (.gsr, absolutely positioned) are clipped here instead of widening
+   the page on a phone */
+.gwl-scroll { position: relative; overflow-x: auto; }
+.gtable { width: 100%; border-collapse: collapse; font: 400 15px/1.4 var(--f); }
+.gtable th { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; font: 600 13px var(--f); letter-spacing: .02em;
+  color: var(--ink-2); white-space: nowrap; }
+.gtable td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.gtable tr.retired td { color: var(--ink-2); }
+.gtable tr.retired td:nth-child(2) { text-decoration: line-through; }
+.gmono { font-family: var(--fm); font-size: 13px; white-space: nowrap; }
+.gwl-id { min-width: 150px; overflow-wrap: anywhere; }
+.gwl-acts { white-space: nowrap; }
+.gwl-acts .glink + .glink { margin-left: 16px; }
+.gwl-retired { color: var(--review-fg); font-weight: 600; }
+.gwl-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+.gwl-pager .ghint { margin-right: auto; }
+.gwl-log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font: 400 15px/1.45 var(--f); }
+.gwl-when { color: var(--ink-2); font-feature-settings: "tnum"; }
+.gwl-preview { margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--surface-2); font: 400 15px/1.5 var(--f); }
+/* the watchlist form's fields are text areas (a cell can hold several lines), styled like the inputs */
+.gfield textarea { min-height: 42px; padding: 9px 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg);
+  color: var(--ink); font: 400 16px/1.4 var(--f); resize: vertical; }
+
+/* ---- toasts -------------------------------------------------------------------------------------------------------- */
+.gtoasts { position: fixed; right: 16px; bottom: 16px; z-index: 30; display: grid; gap: 8px; }
+.gtoast { max-width: 48ch; padding: 12px 16px; border-radius: 16px; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--card-bd); box-shadow: var(--card-sh); font: 500 15px/1.4 var(--f); }
+.gtoast.bad { color: var(--high-fg); border-color: var(--high-solid); }
+
+/* ---- smaller screens ----------------------------------------------------------------------------------------------- */
+@media (max-width: 819.98px) {   /* "below 820px" (the handoff): an 820px window keeps the side-by-side verdict card */
+  .gverdict { flex-direction: column; align-items: flex-start; gap: 24px; padding: 24px; }
+  .gword { font-size: 48px; }
+  .gh1 { font-size: 44px; }
+  .greport { flex-direction: column; gap: 16px; }
+  .grow { flex-direction: column; align-items: flex-start; gap: 12px; }
+}
+@media (max-width: 960px) {
+  .gbar-in, .gnav { gap: 20px; }
+}
+/* two reason cards a row (a 652-972px window): a third one alone takes the whole row rather than half of it */
+@media (min-width: 652px) and (max-width: 971.98px) {
+  .greasons > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .gbar { height: auto; }
+  .gbar-in { flex-wrap: wrap; column-gap: 16px; row-gap: 0; padding-top: 4px; }
+  .gnav { order: 3; width: 100%; gap: 22px; }
+  .gnav a { height: 44px; }
+  .gsteps .gstep-l { width: auto; flex: 1 1 auto; min-width: 0; }   /* "In progress" stays on one line */
+  .gheadline { font-size: 21px; }
+  .gmore-btn { flex-direction: column; align-items: flex-start; gap: 0; padding: 4px 0; text-align: left; }
+  /* only the dot shows on a phone; its words stay for screen readers (and as the tooltip) */
+  .gstatus span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .gh1 { font-size: 38px; }
+  .gsub { font-size: 20px; }
+}

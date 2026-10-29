@@ -1,0 +1,13 @@
+# Phase 1 (video collector). Install after requirements.txt, on the RTX 3090 PC.
+# PyTorch with CUDA: install from https://pytorch.org using the selector for your CUDA version,
+# e.g. pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+opencv-python>=4.9
+mediapipe>=0.10
+timm>=1.0
+# Voice-clone check (chimera/voice.py): speech detection. MIT; the model file ships inside the package.
+silero-vad>=5.1
+einops>=0.8            # DF Arena 500M's model code (MIT)
+# ID check (chimera/idcheck.py): RapidOCR reads the machine-readable lines (Apache-2.0, PaddleOCR's models); onnxruntime (MIT)
+# also runs the ArcFace face-match model (InsightFace w600k_r50: non-commercial, the author's OK, local only, never redistributed).
+rapidocr-onnxruntime>=1.2
+onnxruntime>=1.17

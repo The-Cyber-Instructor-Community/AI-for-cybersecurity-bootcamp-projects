@@ -1,0 +1,13 @@
+# Core pipeline (no GPU needed). Tested on Python 3.13; target Python 3.11+.
+pandas>=2.2
+openpyxl>=3.1
+numpy>=1.26
+scikit-learn>=1.4
+pdfplumber>=0.11
+phonenumbers>=8.13
+rapidfuzz>=3.6
+# Synthetic data and tests
+faker>=24.0
+reportlab>=4.0
+pytest>=8.0
+opencv-python>=4.9   # the video tests draw small synthetic clips; a fresh install failed without it (Oct 27)
