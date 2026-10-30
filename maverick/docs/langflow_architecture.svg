@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1060" viewBox="0 0 1600 1060" font-family="IBM Plex Sans, Segoe UI, Arial, sans-serif">
+<defs><marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6B7280"/></marker><marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2F6FB0"/></marker><marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#C2611F"/></marker></defs>
+<rect x="0" y="0" width="1600" height="1060" rx="0" fill="#F6F5F0" stroke="#F6F5F0" stroke-width="0"/>
+<text x="30" y="48" font-size="24" font-weight="700" fill="#10192B" text-anchor="start">LangFlow architecture: the model runs in LangFlow, the decision stays in Python</text>
+<rect x="30" y="80" width="1020" height="770" rx="14" fill="#F3EFFA" stroke="#7B5EA7" stroke-width="1.6"/>
+<text x="50" y="112" font-size="18" font-weight="700" fill="#4B2E83" text-anchor="start">LangFlow on your laptop · localhost:7860</text>
+<text x="1030" y="112" font-size="13" font-weight="400" fill="#6B5A8A" text-anchor="end">untrusted: the AI zone</text>
+<text x="50" y="158" font-size="16" font-weight="700" fill="#10192B" text-anchor="start">Load notes</text>
+<text x="160.0" y="158" font-size="13" font-weight="400" fill="#6B5A8A" text-anchor="start">run once to build the knowledge base</text>
+<line x1="44" y1="274" x2="1036" y2="274" stroke="#D9CFEA" stroke-width="1"/>
+<text x="50" y="300" font-size="16" font-weight="700" fill="#10192B" text-anchor="start">triage-rag</text>
+<text x="160.0" y="300" font-size="13" font-weight="400" fill="#6B5A8A" text-anchor="start">main runs: notes retrieved per incident</text>
+<line x1="44" y1="416" x2="1036" y2="416" stroke="#D9CFEA" stroke-width="1"/>
+<text x="50" y="442" font-size="16" font-weight="700" fill="#10192B" text-anchor="start">triage-norag</text>
+<text x="179.2" y="442" font-size="13" font-weight="400" fill="#6B5A8A" text-anchor="start">no_rag ablation: no retrieval</text>
+<line x1="44" y1="558" x2="1036" y2="558" stroke="#D9CFEA" stroke-width="1"/>
+<text x="50" y="584" font-size="16" font-weight="700" fill="#10192B" text-anchor="start">triage-poisoned</text>
+<text x="208.0" y="584" font-size="13" font-weight="400" fill="#6B5A8A" text-anchor="start">poisoned_rag test: planted note in the collection</text>
+<line x1="44" y1="700" x2="1036" y2="700" stroke="#D9CFEA" stroke-width="1"/>
+<text x="50" y="726" font-size="16" font-weight="700" fill="#10192B" text-anchor="start">Demo chat</text>
+<text x="150.39999999999998" y="726" font-size="13" font-weight="400" fill="#6B5A8A" text-anchor="start">live demo in the Playground</text>
+<rect x="50" y="170" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="123.0" y="199" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">File</text>
+<text x="123.0" y="220" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">6 .md analyst notes</text>
+<rect x="214" y="170" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="287.0" y="199" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Split Text</text>
+<text x="287.0" y="220" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">800, overlap 100</text>
+<rect x="378" y="170" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="451.0" y="199" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chroma DB</text>
+<text x="451.0" y="220" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">store: triage_notes</text>
+<rect x="542" y="170" width="146" height="70" rx="8" fill="#EAF1FA" stroke="#2F6FB0" stroke-width="1.4"/>
+<text x="615.0" y="199" font-size="14" font-weight="600" fill="#1C2433" text-anchor="middle">Ollama Embeddings</text>
+<text x="615.0" y="220" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">nomic-embed-text</text>
+<path d="M198 205 H211" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M362 205 H375" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M539 205 H527" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<text x="718" y="200" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="start">Re-run with the poisoned note</text>
+<text x="718" y="218" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="start">→ triage_notes_poisoned</text>
+<rect x="50" y="312" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="123.0" y="341" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chat Input</text>
+<text x="123.0" y="362" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">incident + instructions</text>
+<rect x="214" y="312" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="287.0" y="341" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chroma DB</text>
+<text x="287.0" y="362" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">triage_notes, top 3</text>
+<rect x="378" y="312" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="451.0" y="341" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Parser</text>
+<text x="451.0" y="362" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">{text}</text>
+<rect x="542" y="312" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="615.0" y="341" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Prompt</text>
+<text x="615.0" y="362" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">{knowledge} + {input}</text>
+<rect x="706" y="312" width="146" height="70" rx="8" fill="#EAF1FA" stroke="#2F6FB0" stroke-width="1.4"/>
+<text x="779.0" y="341" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Ollama</text>
+<text x="779.0" y="362" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">qwen2.5:3b, temp 0</text>
+<rect x="870" y="312" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="943.0" y="341" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chat Output</text>
+<text x="943.0" y="362" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">JSON verdict</text>
+<path d="M198 347 H211" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M362 347 H375" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M526 347 H539" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M690 347 H703" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M854 347 H867" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<rect x="50" y="454" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="123.0" y="483" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chat Input</text>
+<text x="123.0" y="504" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">incident + instructions</text>
+<rect x="542" y="454" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="615.0" y="483" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Prompt</text>
+<text x="615.0" y="504" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">{input} only</text>
+<rect x="706" y="454" width="146" height="70" rx="8" fill="#EAF1FA" stroke="#2F6FB0" stroke-width="1.4"/>
+<text x="779.0" y="483" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Ollama</text>
+<text x="779.0" y="504" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">qwen2.5:3b, temp 0</text>
+<rect x="870" y="454" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="943.0" y="483" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chat Output</text>
+<text x="943.0" y="504" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">JSON verdict</text>
+<path d="M198 489 H539" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M690 489 H703" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M854 489 H867" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<rect x="50" y="596" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="123.0" y="625" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chat Input</text>
+<text x="123.0" y="646" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">incident + instructions</text>
+<rect x="214" y="596" width="146" height="70" rx="8" fill="#FBE3E1" stroke="#B3362C" stroke-width="1.4"/>
+<text x="287.0" y="625" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chroma DB</text>
+<text x="287.0" y="646" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">triage_notes_poisoned</text>
+<rect x="378" y="596" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="451.0" y="625" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Parser</text>
+<text x="451.0" y="646" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">{text}</text>
+<rect x="542" y="596" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="615.0" y="625" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Prompt</text>
+<text x="615.0" y="646" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">{knowledge} + {input}</text>
+<rect x="706" y="596" width="146" height="70" rx="8" fill="#EAF1FA" stroke="#2F6FB0" stroke-width="1.4"/>
+<text x="779.0" y="625" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Ollama</text>
+<text x="779.0" y="646" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">qwen2.5:3b, temp 0</text>
+<rect x="870" y="596" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="943.0" y="625" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chat Output</text>
+<text x="943.0" y="646" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">JSON verdict</text>
+<path d="M198 631 H211" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M362 631 H375" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M526 631 H539" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M690 631 H703" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M854 631 H867" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<rect x="50" y="738" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="123.0" y="767" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chat Input</text>
+<text x="123.0" y="788" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">your question</text>
+<rect x="214" y="738" width="310" height="70" rx="8" fill="#FFF1E3" stroke="#C2611F" stroke-width="1.4"/>
+<text x="369.0" y="767" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Triage Lab Chat</text>
+<text x="369.0" y="788" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">custom component: POST /ask</text>
+<rect x="542" y="738" width="146" height="70" rx="8" fill="#FFFFFF" stroke="#B9B2A4" stroke-width="1.4"/>
+<text x="615.0" y="767" font-size="14.5" font-weight="600" fill="#1C2433" text-anchor="middle">Chat Output</text>
+<text x="615.0" y="788" font-size="12.5" font-weight="400" fill="#4A5568" text-anchor="middle">answer</text>
+<path d="M198 773 H211" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<path d="M526 773 H539" fill="none" stroke="#6B7280" stroke-width="1.6" marker-end="url(#ag)"/>
+<rect x="1080" y="80" width="490" height="770" rx="14" fill="#EAF1FA" stroke="#2F6FB0" stroke-width="1.6"/>
+<text x="1100" y="112" font-size="18" font-weight="700" fill="#1F4F82" text-anchor="start">Python lab · trusted code</text>
+<rect x="1110" y="140" width="430" height="110" rx="10" fill="#FFFFFF" stroke="#2F6FB0" stroke-width="1.2"/>
+<text x="1128" y="168" font-size="15.5" font-weight="700" fill="#1C2433" text-anchor="start">Pipeline</text>
+<text x="1128" y="190" font-size="13" font-weight="400" fill="#4A5568" text-anchor="start">python -m triage_lab stage main --backend langflow</text>
+<text x="1128" y="209" font-size="13" font-weight="400" fill="#4A5568" text-anchor="start">sends each incident with the triage instructions</text>
+<text x="1128" y="228" font-size="13" font-weight="400" fill="#4A5568" text-anchor="start">to triage-rag / triage-norag / triage-poisoned</text>
+<rect x="1110" y="320" width="430" height="74" rx="10" fill="#DCE8F6" stroke="#2F6FB0" stroke-width="2"/>
+<text x="1128" y="348" font-size="15.5" font-weight="700" fill="#1C2433" text-anchor="start">Verifier</text>
+<text x="1128" y="370" font-size="13" font-weight="400" fill="#4A5568" text-anchor="start">checks every claim against the raw events</text>
+<rect x="1110" y="422" width="430" height="74" rx="10" fill="#DCE8F6" stroke="#2F6FB0" stroke-width="2"/>
+<text x="1128" y="450" font-size="15.5" font-weight="700" fill="#1C2433" text-anchor="start">Gates v1 + v2</text>
+<text x="1128" y="472" font-size="13" font-weight="400" fill="#4A5568" text-anchor="start">decide close or escalate; never read the reasoning</text>
+<rect x="1110" y="524" width="430" height="74" rx="10" fill="#FFFFFF" stroke="#2F6FB0" stroke-width="1.2"/>
+<text x="1128" y="552" font-size="15.5" font-weight="700" fill="#1C2433" text-anchor="start">Results</text>
+<text x="1128" y="574" font-size="13" font-weight="400" fill="#4A5568" text-anchor="start">metrics, REPORT.md, one case file per incident</text>
+<rect x="1110" y="708" width="430" height="96" rx="10" fill="#FFFFFF" stroke="#2F6FB0" stroke-width="1.2"/>
+<text x="1128" y="736" font-size="15.5" font-weight="700" fill="#1C2433" text-anchor="start">Chat server</text>
+<text x="1128" y="758" font-size="13" font-weight="400" fill="#4A5568" text-anchor="start">python -m triage_lab serve · localhost:8765</text>
+<text x="1128" y="777" font-size="13" font-weight="400" fill="#4A5568" text-anchor="start">answers questions from the saved results</text>
+<path d="M1325 252 V317" fill="none" stroke="#2F6FB0" stroke-width="1.6" marker-end="url(#ab)"/>
+<path d="M1325 396 V419" fill="none" stroke="#2F6FB0" stroke-width="1.6" marker-end="url(#ab)"/>
+<path d="M1325 498 V521" fill="none" stroke="#2F6FB0" stroke-width="1.6" marker-end="url(#ab)"/>
+<path d="M1325 600 V705" fill="none" stroke="#2F6FB0" stroke-width="1.6" marker-end="url(#ab)"/>
+<path d="M1110 195 H1066 V631" fill="none" stroke="#2F6FB0" stroke-width="1.8"/>
+<path d="M1066 347 H1053" stroke="#2F6FB0" stroke-width="1.8" marker-end="url(#ab)"/>
+<path d="M1066 489 H1053" stroke="#2F6FB0" stroke-width="1.8" marker-end="url(#ab)"/>
+<path d="M1066 631 H1053" stroke="#2F6FB0" stroke-width="1.8" marker-end="url(#ab)"/>
+<text x="1120" y="280" font-size="12.5" font-weight="600" fill="#1F4F82" text-anchor="start">POST /api/v1/run/&lt;flow&gt;</text>
+<path d="M1053 395 H1090 V357 H1107" fill="none" stroke="#2F6FB0" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ab)"/>
+<text x="1120" y="300" font-size="12.5" font-weight="600" fill="#1F4F82" text-anchor="start">returns verdict + claims</text>
+<path d="M369.0 810 V830 H1070 V756 H1107" fill="none" stroke="#C2611F" stroke-width="1.8" marker-end="url(#ao)"/>
+<text x="700" y="824" font-size="12.5" font-weight="600" fill="#A8501A" text-anchor="start">POST /ask to the chat server</text>
+<rect x="30" y="880" width="740" height="140" rx="12" fill="#FFFFFF" stroke="#9AA3AF" stroke-width="1.2"/>
+<text x="50" y="912" font-size="17" font-weight="700" fill="#10192B" text-anchor="start">Ollama · localhost:11434</text>
+<text x="50" y="940" font-size="13.5" font-weight="400" fill="#374151" text-anchor="start">qwen2.5:3b: chat model inside every triage flow</text>
+<text x="50" y="962" font-size="13.5" font-weight="400" fill="#374151" text-anchor="start">nomic-embed-text: embeddings for Chroma (ingest and search must match)</text>
+<text x="50" y="984" font-size="13.5" font-weight="400" fill="#374151" text-anchor="start">the lab also calls Ollama directly for agentic runs and repeats</text>
+<text x="50" y="1006" font-size="13" font-weight="400" fill="#6B7280" text-anchor="start">(reported results: qwen2.5 7B and 14B on Kaggle, same pipeline without LangFlow)</text>
+<rect x="800" y="880" width="770" height="140" rx="12" fill="#FFFFFF" stroke="#9AA3AF" stroke-width="1.2"/>
+<text x="820" y="912" font-size="17" font-weight="700" fill="#10192B" text-anchor="start">Chroma persist directory</text>
+<text x="820" y="940" font-size="13.5" font-weight="400" fill="#374151" text-anchor="start">triage_notes: the 6 notes from knowledge/ (or your own rewrites)</text>
+<text x="820" y="962" font-size="13.5" font-weight="400" fill="#374151" text-anchor="start">triage_notes_poisoned: the same 6 + knowledge_poison/ planted note</text>
+<text x="820" y="984" font-size="13.5" font-weight="400" fill="#374151" text-anchor="start">Docker: /app/langflow/chroma · pip install: C:\langflow-chroma</text>
+<path d="M400 852 V877" fill="none" stroke="#6B7280" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ag)"/>
+<path d="M1180 852 V877" fill="none" stroke="#6B7280" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ag)"/>
+</svg>

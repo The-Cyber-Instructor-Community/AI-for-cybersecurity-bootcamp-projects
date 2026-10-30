@@ -1,0 +1,18 @@
+title: Draft rule for missed T1078.004
+tags:
+- attack.t1078.004
+detection:
+  selection:
+    event_type: signin
+    app: Office365
+    country: AU
+    country_new: false
+    device_new: true
+    mfa: push_approved
+    result: success
+  condition: selection
+level: medium
+status: experimental
+description: Drafted by gap loop (stub (rule-based stand-in, not AI)) for 14 missed
+  T1078.004 events. Backtest recall 0.35, false positives 8. FAILED the backtest gate.
+  Needs human approval.

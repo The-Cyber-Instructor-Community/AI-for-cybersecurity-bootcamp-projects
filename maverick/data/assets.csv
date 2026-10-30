@@ -1,0 +1,13 @@
+asset,type,owner,criticality,crown_jewel,notes
+finance-reports,cloud_bucket,Finance,critical,yes,"Quarterly financials, board packs; exports require a change ticket"
+team-shared,cloud_bucket,All staff,low,no,General team files
+marketing-assets,cloud_bucket,Marketing,low,no,Public brand assets
+eng-artifacts,cloud_bucket,Engineering,medium,no,Build outputs
+WS-ALICE,workstation,alice.ng,medium,no,Finance analyst laptop
+WS-BOB,workstation,bob.smith,low,no,Sales laptop
+WS-CAROL,workstation,carol.it,high,no,IT administrator workstation (domain admin tooling)
+WS-DAVE,workstation,dave.ops,high,no,Cloud engineer workstation (production access)
+WS-ERIN,workstation,erin.hr,medium,no,HR laptop (personal data)
+WS-FRANK,workstation,frank.post,low,no,Mailroom shared PC
+WS-GRACE,workstation,grace.dev,medium,no,Developer laptop (VS Code tooling)
+WS-HENRY,workstation,henry.law,medium,no,Legal laptop (privileged legal material)

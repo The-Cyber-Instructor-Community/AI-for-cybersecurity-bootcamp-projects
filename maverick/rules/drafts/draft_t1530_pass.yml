@@ -1,0 +1,16 @@
+title: Draft rule for missed T1530
+tags:
+- attack.t1530
+detection:
+  selection:
+    event_type: object_access
+    bucket: finance-reports
+    object_count|gte: 52
+    operation: GetObject
+    user_agent: python-requests/2.31
+  condition: selection
+level: medium
+status: experimental
+description: Drafted by gap loop (stub (rule-based stand-in, not AI)) for 6 missed
+  T1530 events. Backtest recall 1.0, false positives 0. Passed the backtest gate.
+  Needs human approval.

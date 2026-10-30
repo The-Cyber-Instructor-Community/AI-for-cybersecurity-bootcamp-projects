@@ -1,0 +1,10 @@
+user,role,department,privileged,usual_country
+alice.ng,Finance analyst,Finance,no,AU
+bob.smith,Account executive,Sales,no,AU
+carol.it,IT administrator,IT,yes,AU
+dave.ops,Cloud engineer,Platform,yes,AU
+erin.hr,HR advisor,People,no,AU
+frank.post,Mailroom clerk,Facilities,no,AU
+grace.dev,Software developer,Engineering,no,AU
+henry.law,Legal counsel,Legal,no,AU
+svc-backup,Backup service account,IT,yes,AU
