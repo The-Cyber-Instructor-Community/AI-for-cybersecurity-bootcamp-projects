@@ -1,0 +1,17 @@
+title: User clicked a link in an email from an external sender
+id: 6f1d0c2a-0001-4a7e-9c11-000000000001
+status: experimental
+description: Fires when a user clicks a URL in an email sent from outside the organisation. Noisy by design; triage must use sender reputation and what happens next.
+author: AI Triage Assurance Lab
+tags:
+  - attack.initial-access
+  - attack.t1566.002
+logsource:
+  product: lab
+  service: email
+detection:
+  selection:
+    event_type: email_link_click
+    sender_internal: false
+  condition: selection
+level: medium

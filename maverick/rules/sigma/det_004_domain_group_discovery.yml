@@ -1,0 +1,20 @@
+title: Domain group enumeration with net.exe
+id: 6f1d0c2a-0004-4a7e-9c11-000000000004
+status: experimental
+description: Lists members of domain groups such as Domain Admins. Routine for administrators, a classic discovery step for attackers.
+author: AI Triage Assurance Lab
+tags:
+  - attack.discovery
+  - attack.t1069.002
+logsource:
+  product: lab
+  category: process_creation
+detection:
+  selection:
+    event_type: process_create
+    cmdline|contains|all:
+      - 'net'
+      - 'group'
+      - '/domain'
+  condition: selection
+level: medium

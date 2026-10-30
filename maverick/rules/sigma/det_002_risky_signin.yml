@@ -1,0 +1,19 @@
+title: Successful sign-in from a new device in a new country
+id: 6f1d0c2a-0002-4a7e-9c11-000000000002
+status: experimental
+description: A valid account signs in from a device and a country never seen for that user. Also fires on genuine travel.
+author: AI Triage Assurance Lab
+tags:
+  - attack.initial-access
+  - attack.t1078.004
+logsource:
+  product: lab
+  service: identity
+detection:
+  selection:
+    event_type: signin
+    result: success
+    device_new: true
+    country_new: true
+  condition: selection
+level: high

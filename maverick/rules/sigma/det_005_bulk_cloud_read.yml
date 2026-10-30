@@ -1,0 +1,20 @@
+title: Bulk read of objects from cloud storage
+id: 6f1d0c2a-0005-4a7e-9c11-000000000005
+status: experimental
+description: One identity reads 100 or more objects in a single access burst. The known backup service account is excluded.
+author: AI Triage Assurance Lab
+tags:
+  - attack.collection
+  - attack.t1530
+logsource:
+  product: lab
+  service: cloud
+detection:
+  selection:
+    event_type: object_access
+    operation: GetObject
+    object_count|gte: 100
+  filter_backup:
+    user: svc-backup
+  condition: selection and not filter_backup
+level: medium

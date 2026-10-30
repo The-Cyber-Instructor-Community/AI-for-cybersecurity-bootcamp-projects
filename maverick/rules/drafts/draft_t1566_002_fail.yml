@@ -1,0 +1,14 @@
+title: Draft rule for missed T1566.002
+tags:
+- attack.t1566.002
+detection:
+  selection:
+    event_type: email_received
+    domain_age_days|gte: 3
+    sender_internal: false
+  condition: selection
+level: medium
+status: experimental
+description: Drafted by gap loop (stub (rule-based stand-in, not AI)) for 41 missed
+  T1566.002 events. Backtest recall 0.5, false positives 15. FAILED the backtest gate.
+  Needs human approval.

@@ -1,0 +1,20 @@
+title: PowerShell launched with an encoded command
+id: 6f1d0c2a-0003-4a7e-9c11-000000000003
+status: experimental
+description: Encoded commands hide what PowerShell runs. Developers and admin tooling use them too.
+author: AI Triage Assurance Lab
+tags:
+  - attack.execution
+  - attack.t1059.001
+logsource:
+  product: lab
+  category: process_creation
+detection:
+  selection:
+    event_type: process_create
+    image|endswith: '\powershell.exe'
+    cmdline|contains:
+      - ' -enc'
+      - ' -encodedcommand'
+  condition: selection
+level: medium
